@@ -27,6 +27,10 @@ public class ItemService {
         return itemRepository.findByItemName(name);
     }
 
+    public Item findByItemCode(int code){
+        return itemRepository.findByItemCode(code);
+    }
+
     public List<String> getCategoryItem(int code){
         return itemRepository.findItemNamesByCategoryCode(code);
     }

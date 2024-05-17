@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Item;
+import com.example.demo.entity.Price;
 import com.example.demo.service.ItemService;
 import com.example.demo.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,49 @@ public class PriceController {
         return priceService.findDistinctRankNamesByKindName(kind);
     }
 
-    @GetMapping("/save/name")
+    @GetMapping("/save/names")
     public List<String> getTop10Name(){
-        return null;
+        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+        List<String> names = new ArrayList<>();
+
+        for(int i = 0; i < 10; i++){
+            Item item = itemService.findByItemCode(prices.get(i).getItemCode().getItemCode());
+            names.add(item.getItemName());
+        }
+        return names;
+    }
+
+    @GetMapping("/save/kinds")
+    public List<String> getTop10Kind(){
+        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+        List<String> kinds = new ArrayList<>();
+
+        for(int i = 0; i < 10; i++){
+            kinds.add(prices.get(i).getKindName());
+        }
+        return kinds;
+    }
+
+    @GetMapping("/save/ranks")
+    public List<String> getTop10Rank(){
+        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+        List<String> ranks = new ArrayList<>();
+
+        for(int i = 0; i < 10; i++){
+            ranks.add(prices.get(i).getRankName());
+        }
+        return ranks;
+    }
+
+    @GetMapping("/save/values")
+    public List<Double> getTop10Value(){
+        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+        List<Double> values = new ArrayList<>();
+
+        for(int i = 0; i < 10; i++){
+            values.add(prices.get(i).getValue());
+        }
+        return values;
     }
 
 }
