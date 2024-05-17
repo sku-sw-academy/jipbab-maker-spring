@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Item;
-import com.example.demo.repository.ItemRepository;
-import com.example.demo.repository.PriceRepository;
 import com.example.demo.service.ItemService;
 import com.example.demo.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
