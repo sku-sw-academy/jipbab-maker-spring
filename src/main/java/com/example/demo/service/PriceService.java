@@ -193,34 +193,34 @@ public class PriceService {
 
         if (last != null) {
             if (last.getDpr1().equals("-")) {
-                priceDTO.setValue(0D);
+                priceDTO.setValues(0D);
             } else {
                 double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
                 double dpr2_d = Double.parseDouble(last.getDpr1().replace(",", ""));
 
                 if (dpr2_d == 0) {
-                    priceDTO.setValue(dpr1_d);
+                    priceDTO.setValues(dpr1_d);
                 } else {
                     double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
                     String formattedValue = String.format("%.2f", value);
                     double roundedValue = Double.parseDouble(formattedValue);
-                    priceDTO.setValue(roundedValue);
+                    priceDTO.setValues(roundedValue);
                 }
             }
         } else {
             if (dpr2.equals("-")) {
-                priceDTO.setValue(0D);
+                priceDTO.setValues(0D);
             } else {
                 double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
                 double dpr2_d = Double.parseDouble(dpr2.replace(",", ""));
 
                 if (dpr2_d == 0) {
-                    priceDTO.setValue(dpr1_d);
+                    priceDTO.setValues(dpr1_d);
                 } else {
                     double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
                     String formattedValue = String.format("%.2f", value);
                     double roundedValue = Double.parseDouble(formattedValue);
-                    priceDTO.setValue(roundedValue);
+                    priceDTO.setValues(roundedValue);
                 }
             }
         }
@@ -249,8 +249,12 @@ public class PriceService {
         return priceRepository.findDistinctRankNamesByKindName(kindName);
     }
 
-    public List<Price> findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc(){
-        return priceRepository.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+    public List<Price> findByRegdayOrderByValue(String regday){
+        return priceRepository.findByRegdayOrderByValue(regday);
+    }
+
+    public List<Price> findFirst3ByRegdayOrderByValue(String regday){
+        return priceRepository.findFirst3ByRegdayOrderByValue(regday);
     }
 
 }

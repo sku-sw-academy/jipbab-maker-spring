@@ -30,8 +30,11 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     @Query(value = "select distinct rank_name from price where kind_name = :kindName", nativeQuery = true)
     List<String> findDistinctRankNamesByKindName(@Param("kindName") String kind);
 
-    @Query(value = "select * from price where value is not null order by regday desc, value limit 10", nativeQuery = true)
-    List<Price> findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
+    @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value", nativeQuery = true)
+    List<Price> findByRegdayOrderByValue(@Param("regday") String regday);
+
+    @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value limit 3", nativeQuery = true)
+    List<Price> findFirst3ByRegdayOrderByValue(@Param("regday") String regday);
 
 }
 

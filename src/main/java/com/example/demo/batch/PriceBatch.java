@@ -40,7 +40,7 @@ public class PriceBatch {
             map.put(400, "과일류");
             map.put(500, "축산물");
             map.put(600, "수산물");
-            List<Price> prices = priceService.fetchPrices("2024-05-21", map);
+            List<Price> prices = priceService.fetchPrices("2024-05-22", map);
             return RepeatStatus.FINISHED;
         }
         );

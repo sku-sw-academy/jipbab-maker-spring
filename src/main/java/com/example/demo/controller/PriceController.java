@@ -1,10 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.PriceDTO;
 import com.example.demo.entity.Item;
 import com.example.demo.entity.Price;
 import com.example.demo.service.ItemService;
 import com.example.demo.service.PriceService;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +28,95 @@ public class PriceController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping("/kinds/{itemname}")
+    @GetMapping("/save/names3/{regday}") //메인페이지 알뜰
+    public List<String> getTop3Names(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findFirst3ByRegdayOrderByValue(regday);
+        List<String> names = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            Item item = itemService.findByItemCode(prices.get(i).getItemCode().getItemCode());
+            names.add(item.getItemName());
+        }
+        return names;
+    }
+
+    @GetMapping("/save/values3/{regday}") //메인페이지 알뜰
+    public List<Double> getTop3Values(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        List<Double> values = new ArrayList<>();
+
+        for(int i = 0; i < 3; i++){
+            values.add(prices.get(i).getValues());
+        }
+
+        return values;
+    }
+
+    @GetMapping("/save/names/{regday}") //알뜰 소비 페이지
+    public List<String> getNames(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        List<String> names = new ArrayList<>();
+
+        for(Price price : prices){
+            Item item = itemService.findByItemCode(price.getItemCode().getItemCode());
+            names.add(item.getItemName());
+        }
+        return names;
+    }
+
+    @GetMapping("/save/detail/{regday}") // 알뜰 소비 페이지
+    public ResponseEntity<List<PriceDTO>> getDetails(@PathVariable("regday") String regday) {
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+
+        if (prices.isEmpty()) {
+            // 데이터가 없으면 404 상태 코드를 반환
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // 데이터가 있으면 DTO로 변환하여 반환
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+        for (Price price : prices) {
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return new ResponseEntity<>(priceDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/save/kinds/{regday}") //알뜰 소비 페이지
+    public List<String> getKinds(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        List<String> kinds = new ArrayList<>();
+
+        for(Price price : prices){
+            kinds.add(price.getKindName());
+        }
+        return kinds;
+    }
+
+    @GetMapping("/save/ranks/{regday}") //알뜰 소비 페이지
+    public List<String> getRanks(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        List<String> ranks = new ArrayList<>();
+
+        for(Price price : prices){
+            ranks.add(price.getRankName());
+        }
+        return ranks;
+    }
+
+    @GetMapping("/save/values/{regday}") //알뜰 소비 페이지
+    public List<Double> getValues(@PathVariable("regday") String regday){
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        List<Double> values = new ArrayList<>();
+
+        for(Price price : prices){
+            values.add(price.getValues());
+        }
+        return values;
+    }
+
+    @GetMapping("/kinds/{itemname}")  //검색 결과 페이지
     public List<String> findDistinctKindNamesByItemCode(@PathVariable("itemname") String itemname){
         item = itemService.findByItemName(itemname);
         if (item != null) {
@@ -35,54 +128,9 @@ public class PriceController {
         }
     }
 
-    @GetMapping("/ranks/{kind}")
+    @GetMapping("/ranks/{kind}") //검색 결과 페이지
     public List<String> findDistinctRankNamesByKindName(@PathVariable("kind") String kind){
         return priceService.findDistinctRankNamesByKindName(kind);
-    }
-
-    @GetMapping("/save/names")
-    public List<String> getTop10Name(){
-        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
-        List<String> names = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++){
-            Item item = itemService.findByItemCode(prices.get(i).getItemCode().getItemCode());
-            names.add(item.getItemName());
-        }
-        return names;
-    }
-
-    @GetMapping("/save/kinds")
-    public List<String> getTop10Kind(){
-        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
-        List<String> kinds = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++){
-            kinds.add(prices.get(i).getKindName());
-        }
-        return kinds;
-    }
-
-    @GetMapping("/save/ranks")
-    public List<String> getTop10Rank(){
-        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
-        List<String> ranks = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++){
-            ranks.add(prices.get(i).getRankName());
-        }
-        return ranks;
-    }
-
-    @GetMapping("/save/values")
-    public List<Double> getTop10Value(){
-        List<Price> prices = priceService.findFirst10ByValueIsNotNullOrderByRegDayDescValueAsc();
-        List<Double> values = new ArrayList<>();
-
-        for(int i = 0; i < 10; i++){
-            values.add(prices.get(i).getValue());
-        }
-        return values;
     }
 
 }

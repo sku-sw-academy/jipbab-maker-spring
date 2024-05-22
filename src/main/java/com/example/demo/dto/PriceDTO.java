@@ -26,13 +26,13 @@ public class PriceDTO {
     private String dpr6;
     private String dpr7;
     private String regday;
-    private double value;
+    private double values;
     private boolean status;
 
     // 생성자, Getter 및 Setter 메서드
     public PriceDTO() {}
 
-    public PriceDTO(String id, String name, ItemDTO itemCode, String kindName, int kindCode, String rankName, int rankCode, String unit,  String dpr1,  String dpr2,  String dpr3,   String dpr5,  String dpr6,  String dpr7, String regday, Double value, boolean status) {
+    public PriceDTO(String id, String name, ItemDTO itemCode, String kindName, int kindCode, String rankName, int rankCode, String unit,  String dpr1,  String dpr2,  String dpr3,   String dpr5,  String dpr6,  String dpr7, String regday, Double values, boolean status) {
         this.id = id;
         this.name = name;
         this.itemCode = itemCode;
@@ -48,7 +48,7 @@ public class PriceDTO {
         this.dpr6 = dpr6;
         this.dpr7 = dpr7;
         this.regday = regday;
-        this.value = value;
+        this.values = values;
         this.status = status;
     }
 
@@ -69,7 +69,7 @@ public class PriceDTO {
         priceDTO.setDpr7(price.getDpr7());
         priceDTO.setRegday(price.getRegday());
         priceDTO.setStatus(price.getStatus());
-        priceDTO.setValue(price.getValue());
+        priceDTO.setValues(price.getValues());
 
         ItemDTO itemDTO = new ItemDTO();
         priceDTO.setItemCode(itemDTO.convertToDTO(price.getItemCode()));

@@ -60,8 +60,8 @@ public class Price {
     @Column
     private String regday;
 
-    @Column
-    private Double value;
+    @Column(name = "value")
+    private Double values;
 
     @Column
     private Boolean status;
@@ -89,7 +89,7 @@ public class Price {
         price.setDpr7(priceDTO.getDpr7());
         price.setRegday(priceDTO.getRegday());
         price.setStatus(priceDTO.isStatus());
-        price.setValue(priceDTO.getValue());
+        price.setValues(priceDTO.getValues());
 
         Item item = new Item();
         price.setItemCode(item.convertToEntity(priceDTO.getItemCode()));
