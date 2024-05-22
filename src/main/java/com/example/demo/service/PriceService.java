@@ -59,7 +59,7 @@ public class PriceService {
 
         try {
             LocalDate currentDate = LocalDate.now();
-            LocalDate newDate = currentDate.minusDays(7);
+            LocalDate newDate = currentDate.minusDays(10);
 
             for (Map.Entry<Integer, String> entry : categoryMap.entrySet()) {
                 int categoryCode = entry.getKey();
@@ -160,8 +160,8 @@ public class PriceService {
         String name = itemCode + kindCode + rankCode + unit;
         String id = name + regday;
 
-        List<Price> eigthDays = priceRepository.findByRegday(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        if (eigthDays != null) {
+        List<Price> tenDays = priceRepository.findByRegday(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        if (tenDays != null) {
             priceRepository.deleteAllByRegdayBefore(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         }
 
