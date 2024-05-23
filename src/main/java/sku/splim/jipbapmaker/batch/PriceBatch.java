@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import sku.splim.jipbapmaker.entity.Price;
 
@@ -39,7 +42,11 @@ public class PriceBatch {
             map.put(400, "과일류");
             map.put(500, "축산물");
             map.put(600, "수산물");
-            List<Price> prices = priceService.fetchPrices("2024-05-22", map);
+
+            LocalDate currentDate = LocalDate.now();
+            String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            List<Price> prices = priceService.fetchPrices(regday, map);
             return RepeatStatus.FINISHED;
         }
         );
