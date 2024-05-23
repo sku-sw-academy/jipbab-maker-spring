@@ -1,8 +1,8 @@
 package sku.splim.jipbapmaker.controller;
 
 import sku.splim.jipbapmaker.dto.PriceDTO;
-import sku.splim.jipbapmaker.entity.Item;
-import sku.splim.jipbapmaker.entity.Price;
+import sku.splim.jipbapmaker.domain.Item;
+import sku.splim.jipbapmaker.domain.Price;
 import sku.splim.jipbapmaker.service.ItemService;
 import sku.splim.jipbapmaker.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;

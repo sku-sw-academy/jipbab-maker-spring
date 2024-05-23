@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.repository;
 
-import sku.splim.jipbapmaker.entity.Price;
+import sku.splim.jipbapmaker.domain.Price;
 import java.util.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

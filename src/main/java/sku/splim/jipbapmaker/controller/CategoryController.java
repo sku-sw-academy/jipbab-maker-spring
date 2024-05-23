@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.controller;
 
-import sku.splim.jipbapmaker.entity.Category;
+import sku.splim.jipbapmaker.domain.Category;
 import sku.splim.jipbapmaker.repository.CategoryRepository;
 import sku.splim.jipbapmaker.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;

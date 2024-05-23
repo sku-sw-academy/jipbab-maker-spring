@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.dto;
 
-import sku.splim.jipbapmaker.entity.Item;
+import sku.splim.jipbapmaker.domain.Item;
 import lombok.Getter;
 import lombok.Setter;
 

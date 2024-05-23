@@ -1,4 +1,4 @@
-package sku.splim.jipbapmaker.entity;
+package sku.splim.jipbapmaker.domain;
 
 import sku.splim.jipbapmaker.dto.CategoryDTO;
 import jakarta.persistence.Column;

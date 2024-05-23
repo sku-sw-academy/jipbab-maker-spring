@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.service;
 
-import sku.splim.jipbapmaker.entity.Item;
+import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.repository;
 
-import sku.splim.jipbapmaker.entity.Category;
+import sku.splim.jipbapmaker.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

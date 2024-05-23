@@ -15,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import sku.splim.jipbapmaker.entity.Price;
+import sku.splim.jipbapmaker.domain.Price;
 
 @Configuration
 public class PriceBatch {

@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.repository;
 
-import sku.splim.jipbapmaker.entity.Item;
+import sku.splim.jipbapmaker.domain.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
