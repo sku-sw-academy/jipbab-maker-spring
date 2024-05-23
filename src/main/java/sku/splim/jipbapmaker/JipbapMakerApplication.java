@@ -6,10 +6,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class DatetestApplication {
+public class JipbapMakerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DatetestApplication.class, args);
+		SpringApplication.run(JipbapMakerApplication.class, args);
 	}
 
 }
