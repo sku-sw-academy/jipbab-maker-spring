@@ -160,6 +160,9 @@ public class PriceService {
         String name = itemCode + kindCode + rankCode + unit;
         String id = name + regday;
 
+        String change = "\\(" + unit + "\\)";
+        kindName = kindName.replaceAll(change,"");
+
         List<Price> tenDays = priceRepository.findByRegday(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         if (tenDays != null) {
             priceRepository.deleteAllByRegdayBefore(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));

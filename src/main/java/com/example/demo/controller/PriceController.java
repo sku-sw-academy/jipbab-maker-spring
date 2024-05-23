@@ -28,28 +28,17 @@ public class PriceController {
     @Autowired
     private ItemService itemService;
 
-    @GetMapping("/save/names3/{regday}") //메인페이지 알뜰
-    public List<String> getTop3Names(@PathVariable("regday") String regday){
+    @GetMapping("/saving/top3/{regday}") //메인페이지 알뜰
+    public List<PriceDTO> getTop3Names(@PathVariable("regday") String regday){
         List<Price> prices = priceService.findFirst3ByRegdayOrderByValue(regday);
-        List<String> names = new ArrayList<>();
+        List<PriceDTO> priceDTOs = new ArrayList<>();
 
-        for(int i = 0; i < 3; i++){
-            Item item = itemService.findByItemCode(prices.get(i).getItemCode().getItemCode());
-            names.add(item.getItemName());
-        }
-        return names;
-    }
-
-    @GetMapping("/save/values3/{regday}") //메인페이지 알뜰
-    public List<Double> getTop3Values(@PathVariable("regday") String regday){
-        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
-        List<Double> values = new ArrayList<>();
-
-        for(int i = 0; i < 3; i++){
-            values.add(prices.get(i).getValues());
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
         }
 
-        return values;
+        return priceDTOs;
     }
 
     @GetMapping("/save/names/{regday}") //알뜰 소비 페이지
@@ -64,7 +53,7 @@ public class PriceController {
         return names;
     }
 
-    @GetMapping("/save/detail/{regday}") // 알뜰 소비 페이지
+    @GetMapping("/saving/detail/{regday}") // 알뜰 소비 페이지
     public ResponseEntity<List<PriceDTO>> getDetails(@PathVariable("regday") String regday) {
         List<Price> prices = priceService.findByRegdayOrderByValue(regday);
 
