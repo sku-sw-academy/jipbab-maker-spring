@@ -40,18 +40,6 @@ public class PriceController {
         return priceDTOs;
     }
 
-    @GetMapping("/save/names/{regday}") //알뜰 소비 페이지
-    public List<String> getNames(@PathVariable("regday") String regday){
-        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
-        List<String> names = new ArrayList<>();
-
-        for(Price price : prices){
-            Item item = itemService.findByItemCode(price.getItemCode().getItemCode());
-            names.add(item.getItemName());
-        }
-        return names;
-    }
-
     @GetMapping("/saving/detail/{regday}") // 알뜰 소비 페이지
     public ResponseEntity<List<PriceDTO>> getDetails(@PathVariable("regday") String regday) {
         List<Price> prices = priceService.findByRegdayOrderByValue(regday);
@@ -69,39 +57,6 @@ public class PriceController {
         }
 
         return new ResponseEntity<>(priceDTOs, HttpStatus.OK);
-    }
-
-    @GetMapping("/save/kinds/{regday}") //알뜰 소비 페이지
-    public List<String> getKinds(@PathVariable("regday") String regday){
-        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
-        List<String> kinds = new ArrayList<>();
-
-        for(Price price : prices){
-            kinds.add(price.getKindName());
-        }
-        return kinds;
-    }
-
-    @GetMapping("/save/ranks/{regday}") //알뜰 소비 페이지
-    public List<String> getRanks(@PathVariable("regday") String regday){
-        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
-        List<String> ranks = new ArrayList<>();
-
-        for(Price price : prices){
-            ranks.add(price.getRankName());
-        }
-        return ranks;
-    }
-
-    @GetMapping("/save/values/{regday}") //알뜰 소비 페이지
-    public List<Double> getValues(@PathVariable("regday") String regday){
-        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
-        List<Double> values = new ArrayList<>();
-
-        for(Price price : prices){
-            values.add(price.getValues());
-        }
-        return values;
     }
 
     @GetMapping("/kinds/{itemname}")  //검색 결과 페이지
