@@ -259,5 +259,9 @@ public class PriceService {
         return priceRepository.findFirst3ByRegdayOrderByValue(regday);
     }
 
+    public List<Price> findByRegdayOrderByValueDESC(String regday){
+        return priceRepository.findByRegdayOrderByValueDESC(regday);
+    }
+
 }
 

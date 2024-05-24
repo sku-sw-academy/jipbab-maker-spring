@@ -31,6 +31,9 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value", nativeQuery = true)
     List<Price> findByRegdayOrderByValue(@Param("regday") String regday);
 
+    @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value DESC", nativeQuery = true)
+    List<Price> findByRegdayOrderByValueDESC(@Param("regday") String regday);
+
     @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value limit 3", nativeQuery = true)
     List<Price> findFirst3ByRegdayOrderByValue(@Param("regday") String regday);
 

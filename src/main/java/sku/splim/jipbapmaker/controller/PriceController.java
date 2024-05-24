@@ -1,5 +1,7 @@
 package sku.splim.jipbapmaker.controller;
 
+import lombok.Getter;
+import sku.splim.jipbapmaker.domain.Shop;
 import sku.splim.jipbapmaker.dto.PriceDTO;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Price;
@@ -57,6 +59,87 @@ public class PriceController {
         }
 
         return new ResponseEntity<>(priceDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/shopping/decrease/{regday}")
+    public List<Shop> getDShopping(@PathVariable("regday") String regday) {
+        List<Shop> shops = new ArrayList<>();
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        for(Price price : prices){
+            Shop shop = new Shop();
+            shop.setName(price.getItemCode().getItemName());
+            shop.setKind(price.getKindName());
+            shop.setUnit(price.getUnit());
+            shop.setRank(price.getRankName());
+            shop.setPrice(price.getDpr1());
+            shop.setWeek_price(price.getDpr3());
+
+            if(!shop.getWeek_price().equals("-") && !shop.getWeek_price().equals("0")){
+                double dpr1_d = Double.parseDouble(shop.getPrice().replace(",", ""));
+                double dpr2_d = Double.parseDouble(shop.getWeek_price().replace(",", ""));
+                double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
+                String formattedValue = String.format("%.2f", value);
+                double roundedValue = Double.parseDouble(formattedValue);
+                shop.setValues(roundedValue);
+            }else{
+                shop.setValues(0D);
+            }
+
+            shops.add(shop);
+        }
+
+        Collections.sort(shops, new Comparator<Shop>() {
+            @Override
+            public int compare(Shop o1, Shop o2) {
+                int valueComparison = Double.compare(o1.getValues(), o2.getValues());
+                if (valueComparison == 0) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+                return valueComparison;
+            }
+        });
+
+        return shops;
+    }
+
+    @GetMapping("/shopping/increase/{regday}")
+    public List<Shop> getIShopping(@PathVariable("regday") String regday) {
+        List<Shop> shops = new ArrayList<>();
+        List<Price> prices = priceService.findByRegdayOrderByValue(regday);
+        for(Price price : prices){
+            Shop shop = new Shop();
+            shop.setName(price.getItemCode().getItemName());
+            shop.setKind(price.getKindName());
+            shop.setUnit(price.getUnit());
+            shop.setRank(price.getRankName());
+            shop.setPrice(price.getDpr1());
+            shop.setWeek_price(price.getDpr3());
+
+            if(!shop.getWeek_price().equals("-") && !shop.getWeek_price().equals("0")){
+                double dpr1_d = Double.parseDouble(shop.getPrice().replace(",", ""));
+                double dpr2_d = Double.parseDouble(shop.getWeek_price().replace(",", ""));
+                double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
+                String formattedValue = String.format("%.2f", value);
+                double roundedValue = Double.parseDouble(formattedValue);
+                shop.setValues(roundedValue);
+            }else{
+                shop.setValues(0D);
+            }
+            shops.add(shop);
+        }
+
+        Collections.sort(shops, new Comparator<Shop>() {
+            @Override
+            public int compare(Shop o1, Shop o2) {
+                int valueComparison = Double.compare(o2.getValues(), o1.getValues());
+                if (valueComparison == 0) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+                return valueComparison;
+            }
+        });
+
+        return shops;
     }
 
     @GetMapping("/kinds/{itemname}")  //검색 결과 페이지
