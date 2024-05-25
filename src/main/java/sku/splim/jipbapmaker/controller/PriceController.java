@@ -154,9 +154,25 @@ public class PriceController {
         }
     }
 
-    @GetMapping("/ranks/{kind}") //검색 결과 페이지
-    public List<String> findDistinctRankNamesByKindName(@PathVariable("kind") String kind){
-        return priceService.findDistinctRankNamesByKindName(kind);
+    @GetMapping("/ranks/{item}/{kind}") //검색 결과 페이지
+    public List<String> findDistinctRankNamesByKindName(@PathVariable("kind") String kind, @PathVariable("item") String item){
+        int code = itemService.findByItemName(item).getItemCode();
+
+        return priceService.findDistinctRankNamesByKindName(kind, code);
+    }
+
+    @GetMapping("/search/{item}/{kind}/{rank}")
+    public List<PriceDTO> getItemData(@PathVariable("item") String item, @PathVariable("kind")String kind, @PathVariable("rank")String rank){
+        int code = itemService.findByItemName(item).getItemCode();
+        List<Price> prices = priceService.findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(code, kind, rank);
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return priceDTOs;
     }
 
 }

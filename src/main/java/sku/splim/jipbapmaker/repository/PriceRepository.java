@@ -25,8 +25,8 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     @Query(value = "SELECT DISTINCT kind_name FROM Price WHERE item_code = :itemCode", nativeQuery = true)
     List<String> findDistinctKindNamesByItemCode(@Param("itemCode") int itemCode);
 
-    @Query(value = "select distinct rank_name from price where kind_name = :kindName", nativeQuery = true)
-    List<String> findDistinctRankNamesByKindName(@Param("kindName") String kind);
+    @Query(value = "select distinct rank_name from price where kind_name = :kindName AND item_code = :itemCode", nativeQuery = true)
+    List<String> findDistinctRankNamesByKindNameAndItemCode(@Param("kindName") String kind, @Param("itemCode") int code);
 
     @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value", nativeQuery = true)
     List<Price> findByRegdayOrderByValue(@Param("regday") String regday);
@@ -36,6 +36,10 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 
     @Query(value = "SELECT * FROM price WHERE regday = :regday ORDER BY value limit 3", nativeQuery = true)
     List<Price> findFirst3ByRegdayOrderByValue(@Param("regday") String regday);
+
+    @Query(value = "SELECT * FROM price WHERE item_code = :itemCode and kind_name = :kindName and rank_name = :rankName ORDER BY regday DESC", nativeQuery = true)
+    List<Price> findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(@Param("itemCode")int itemCode, @Param("kindName")String kindName, @Param("rankName")String rankName);
+
 
 }
 

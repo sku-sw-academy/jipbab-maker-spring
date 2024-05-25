@@ -247,8 +247,8 @@ public class PriceService {
         return priceRepository.findDistinctKindNamesByItemCode(code);
     }
 
-    public List<String> findDistinctRankNamesByKindName(String kindName){
-        return priceRepository.findDistinctRankNamesByKindName(kindName);
+    public List<String> findDistinctRankNamesByKindName(String kindName, int itemCode){
+        return priceRepository.findDistinctRankNamesByKindNameAndItemCode(kindName, itemCode);
     }
 
     public List<Price> findByRegdayOrderByValue(String regday){
@@ -261,6 +261,10 @@ public class PriceService {
 
     public List<Price> findByRegdayOrderByValueDESC(String regday){
         return priceRepository.findByRegdayOrderByValueDESC(regday);
+    }
+
+    public List<Price> findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(int itemCode, String kindName, String rankName){
+        return priceRepository.findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(itemCode, kindName, rankName);
     }
 
 }
