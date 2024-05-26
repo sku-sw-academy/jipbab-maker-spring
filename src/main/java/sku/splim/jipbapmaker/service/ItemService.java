@@ -31,4 +31,12 @@ public class ItemService {
         return itemRepository.findItemNamesByCategoryCode(code);
     }
 
+    public Item save(Item item){
+        return itemRepository.save(item);
+    }
+
+    public List<Item> getfindTopItemsByCountNotZero(){
+        return itemRepository.findTopItemsByCountNotZero();
+    }
+
 }

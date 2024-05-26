@@ -32,10 +32,18 @@ public class Item {
     @Column(name = "image_path", nullable = true)
     private String imagePath;
 
+    @Column(name = "count")
+    private int count;
+
+    public void incrementCount() {
+        this.count += 1;
+    }
+
     public Item convertToEntity(ItemDTO itemDTO) {
         Item item = new Item();
         item.setItemCode(itemDTO.getItem_code());
         item.setItemName(itemDTO.getItem_name());
+        item.setCount(itemDTO.getCount());
         Category category = new Category();
         item.setCategoryCode(category.convertToEntity(itemDTO.getCategory()));
 

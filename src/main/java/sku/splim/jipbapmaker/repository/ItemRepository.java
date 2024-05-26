@@ -16,4 +16,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value = "SELECT item_name FROM Item WHERE category_code = :code", nativeQuery = true)
     List<String> findItemNamesByCategoryCode(@Param("code") int code);
 
+    @Query(value = "select * from item where count != 0 order by count desc limit 6", nativeQuery = true)
+    List<Item> findTopItemsByCountNotZero();
 }
