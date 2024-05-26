@@ -5,14 +5,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +16,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
 
     @Id
@@ -58,20 +53,8 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String refreshToken;
 
-    @CreatedDate
-    @Column(columnDefinition = "TEXT", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(columnDefinition = "TEXT")
-    private LocalDateTime updatedAt;
-
     @Builder
-    public User(Long id, String email, String password, String nickname, String profile,
-                boolean enabled, boolean push, boolean log,
-                String fcmToken, String accessToken, String refreshToken,
-                LocalDateTime createdAt, LocalDateTime updatedAt) {
-
+    public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken, String accessToken, String refreshToken) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -83,8 +66,6 @@ public class User implements UserDetails {
         this.fcmToken = fcmToken;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     @Override // 권한 반환
