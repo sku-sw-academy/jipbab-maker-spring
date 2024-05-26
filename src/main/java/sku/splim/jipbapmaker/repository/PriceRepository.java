@@ -15,6 +15,9 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     Price findFirstByNameOrderByIdDesc(String name);
     List<Price> findByRegday(String regday);
 
+    @Query(value = "SELECT * FROM Price WHERE item_code = :itemCode ORDER BY regday desc  limit 1", nativeQuery = true)
+    Price findLatestPriceByItemCode(@Param("itemCode") int code);
+
     @Transactional
     void deleteAllByRegday(String regday);
 

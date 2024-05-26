@@ -175,4 +175,30 @@ public class PriceController {
         return priceDTOs;
     }
 
+    @GetMapping("/popular6")
+    public List<PriceDTO> getPopularItemNames6(){
+        List<Price> prices = priceService.getPopularItemNames6();
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return priceDTOs;
+    }
+
+    @GetMapping("/popular9")
+    public List<PriceDTO> getPopularItemNames9(){
+        List<Price> prices = priceService.getPopularItemNames9();
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return priceDTOs;
+    }
+
 }

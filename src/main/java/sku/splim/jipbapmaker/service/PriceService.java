@@ -22,6 +22,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,9 @@ public class PriceService {
 
     @Autowired
     private ItemDTO golbalItemDTO;
+
+    @Autowired
+    private ItemService itemService;
 
     public List<Price> fetchPrices(String regday, Map<Integer, String> categoryMap) {
         List<Price> prices = new ArrayList<>();
@@ -237,6 +241,7 @@ public class PriceService {
             itemDTO.setItem_code(Integer.parseInt(itemCode));
             itemDTO.setItem_name(itemName);
             itemDTO.setCategory(categoryDTO);
+            itemDTO.setCount(0);
             items.add(itemEntity.convertToEntity(itemDTO));
             return itemDTO;
         }
@@ -265,6 +270,110 @@ public class PriceService {
 
     public List<Price> findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(int itemCode, String kindName, String rankName){
         return priceRepository.findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(itemCode, kindName, rankName);
+    }
+
+    public Price save(Price price) {
+        return priceRepository.save(price);
+    }
+
+    public List<Price> getPopularItemNames6() {
+        List<Price> prices = new ArrayList<>();
+        List<Item> items = itemService.getfindTopItemsByCountNotZero();
+        List<String> names = new ArrayList<>(Arrays.asList("사과", "참외", "당근", "토마토", "쌀", "감자"));
+
+        if (items != null) {
+            for (Item item : items) {
+                int code = item.getItemCode();
+                Price price = priceRepository.findLatestPriceByItemCode(code);
+                prices.add(price);
+            }
+
+            // items 리스트의 크기가 6보다 작은 경우 누락된 아이템을 가져옵니다.
+            while (items.size() < 6) {
+                String missingItemName = getMissingItemName(items, names);
+                if (missingItemName != null) {
+                    Item missingItem = itemService.findByItemName(missingItemName);
+                    if (missingItem != null) {
+                        int code = missingItem.getItemCode();
+                        Price price = priceRepository.findLatestPriceByItemCode(code);
+                        prices.add(price);
+                        items.add(missingItem);
+                    }
+                } else {
+                    break; // names 리스트에 추가할 아이템이 없으면 종료합니다.
+                }
+            }
+        } else {
+            // items 리스트가 null인 경우, names에 있는 아이템을 가져와서 prices에 추가합니다.
+            for (String name : names) {
+                Item item = itemService.findByItemName(name);
+                if (item != null) {
+                    int code = item.getItemCode();
+                    Price price = priceRepository.findLatestPriceByItemCode(code);
+                    prices.add(price);
+                }
+            }
+        }
+
+        return prices;
+    }
+
+    public List<Price> getPopularItemNames9() {
+        List<Price> prices = new ArrayList<>();
+        List<Item> items = itemService.getfindTopItemsByCountNotZero();
+        List<String> names = new ArrayList<>(Arrays.asList("사과", "참외", "당근", "토마토", "쌀", "감자", "고구마", "돼지", "소"));
+
+        if (items != null) {
+            for (Item item : items) {
+                int code = item.getItemCode();
+                Price price = priceRepository.findLatestPriceByItemCode(code);
+                prices.add(price);
+            }
+
+            // items 리스트의 크기가 6보다 작은 경우 누락된 아이템을 가져옵니다.
+            while (items.size() < 9) {
+                String missingItemName = getMissingItemName(items, names);
+                if (missingItemName != null) {
+                    Item missingItem = itemService.findByItemName(missingItemName);
+                    if (missingItem != null) {
+                        int code = missingItem.getItemCode();
+                        Price price = priceRepository.findLatestPriceByItemCode(code);
+                        prices.add(price);
+                        items.add(missingItem);
+                    }
+                } else {
+                    break; // names 리스트에 추가할 아이템이 없으면 종료합니다.
+                }
+            }
+        } else {
+            // items 리스트가 null인 경우, names에 있는 아이템을 가져와서 prices에 추가합니다.
+            for (String name : names) {
+                Item item = itemService.findByItemName(name);
+                if (item != null) {
+                    int code = item.getItemCode();
+                    Price price = priceRepository.findLatestPriceByItemCode(code);
+                    prices.add(price);
+                }
+            }
+        }
+
+        return prices;
+    }
+
+    private String getMissingItemName(List<Item> items, List<String> names) {
+        for (String name : names) {
+            boolean found = false;
+            for (Item item : items) {
+                if (item.getItemName().equals(name)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return name;
+            }
+        }
+        return null; // 모든 이름이 이미 리스트에 있으면 null을 반환합니다.
     }
 
 }
