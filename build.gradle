@@ -42,8 +42,9 @@ dependencies {
 	// jwt
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.projectlombok:lombok'
-	implementation 'io.jsonwebtoken:jjwt-root:0.12.5'
-	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 }
 
 tasks.named('test') {
