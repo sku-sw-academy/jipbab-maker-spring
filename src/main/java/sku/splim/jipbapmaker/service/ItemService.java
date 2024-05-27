@@ -39,4 +39,8 @@ public class ItemService {
         return itemRepository.findTopItemsByCountNotZero();
     }
 
+    public List<Item> getfindAll(){
+        return itemRepository.findAll();
+    }
+
 }
