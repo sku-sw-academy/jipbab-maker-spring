@@ -1,11 +1,11 @@
-package sku.splim.jipbapmaker.domain;
+package sku.splim.jipbapmaker.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Shop {
+public class ShopDTO {
     String name;
     String kind;
     String rank;

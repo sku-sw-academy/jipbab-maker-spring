@@ -65,7 +65,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("임시 비밀번호입니다.");
-        message.setText("인증번호: " + verificationCode);
+        message.setText("비밀번호: " + verificationCode);
         mailSender.send(message);
     }
 }
