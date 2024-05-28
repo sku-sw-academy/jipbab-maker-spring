@@ -26,7 +26,7 @@ public class TokenProvider {
         Date now = new Date();
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
-
+    // JWT 토큰 생성 메서드
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
 
@@ -41,7 +41,7 @@ public class TokenProvider {
                 .compact();
     }
 
-
+    // JWT 토큰 유효성 검증 메서드
     public boolean validToken(String token) {
         try {
             Jwts.parser()
