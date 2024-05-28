@@ -47,12 +47,6 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String fcmToken;
 
-    @Column(columnDefinition = "TEXT")
-    private String accessToken;
-
-    @Column(columnDefinition = "TEXT")
-    private String refreshToken;
-
     @Builder
     public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken, String accessToken, String refreshToken) {
         this.id = id;
@@ -64,8 +58,6 @@ public class User implements UserDetails {
         this.push = push;
         this.log = log;
         this.fcmToken = fcmToken;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
 
     @Override // 권한 반환
