@@ -1,7 +1,5 @@
 package sku.splim.jipbapmaker.config;
 
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import sku.splim.jipbapmaker.dto.CategoryDTO;
 import sku.splim.jipbapmaker.dto.ItemDTO;
 import sku.splim.jipbapmaker.dto.PriceDTO;
