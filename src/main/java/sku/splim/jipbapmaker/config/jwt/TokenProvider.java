@@ -4,13 +4,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import sku.splim.jipbapmaker.domain.User;
 
+import java.security.Key;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
@@ -20,58 +24,77 @@ import java.util.Set;
 @Service
 public class TokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
 
     public String generateToken(User user, Duration expiredAt) {
         Date now = new Date();
+        logger.info("Generating token for user: {}", user.getEmail());
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
-    // JWT 토큰 생성 메서드
+
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
+        logger.info("Creating token with expiry date: {}", expiry);
+        logger.info("Issuer: {}", jwtProperties.getIssuer());
+        logger.info("User ID: {}", user.getId());
+        logger.info("User Email: {}", user.getEmail());
+
+        byte[] keyBytes = jwtProperties.getSecretKey().getBytes();
+        Key key = Keys.hmacShaKeyFor(keyBytes);
 
         return Jwts.builder()
+                .signWith(key, SignatureAlgorithm.HS512)
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .setSubject(user.getEmail())
                 .claim("id", user.getId())
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+
                 .compact();
     }
 
-    // JWT 토큰 유효성 검증 메서드
     public boolean validToken(String token) {
         try {
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
-
+            logger.info("Token is valid: {}", token);
             return true;
         } catch (Exception e) {
+            logger.error("Invalid token: {}", token, e);
             return false;
         }
     }
 
-
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        logger.info("Getting authentication for token: {}", token);
 
-        return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject
-                (), "", authorities), token, authorities);
+        return new UsernamePasswordAuthenticationToken(
+                new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities),
+                token,
+                authorities
+        );
     }
 
     public Long getUserId(String token) {
         Claims claims = getClaims(token);
+        logger.info("Extracting user ID from token: {}", token);
         return claims.get("id", Long.class);
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtProperties.getSecretKey())
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            logger.error("Failed to parse claims from token: {}", token, e);
+            throw e;
+        }
     }
 }
