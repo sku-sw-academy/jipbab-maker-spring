@@ -1,10 +1,9 @@
 package sku.splim.jipbapmaker.controller;
 
-import lombok.Getter;
-import sku.splim.jipbapmaker.domain.Shop;
 import sku.splim.jipbapmaker.dto.PriceDTO;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Price;
+import sku.splim.jipbapmaker.dto.ShopDTO;
 import sku.splim.jipbapmaker.service.ItemService;
 import sku.splim.jipbapmaker.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,11 +61,11 @@ public class PriceController {
     }
 
     @GetMapping("/shopping/decrease/{regday}")
-    public List<Shop> getDShopping(@PathVariable("regday") String regday) {
-        List<Shop> shops = new ArrayList<>();
+    public List<ShopDTO> getDShopping(@PathVariable("regday") String regday) {
+        List<ShopDTO> shops = new ArrayList<>();
         List<Price> prices = priceService.findByRegdayOrderByValue(regday);
         for(Price price : prices){
-            Shop shop = new Shop();
+            ShopDTO shop = new ShopDTO();
             shop.setName(price.getItemCode().getItemName());
             shop.setKind(price.getKindName());
             shop.setUnit(price.getUnit());
@@ -88,9 +87,9 @@ public class PriceController {
             shops.add(shop);
         }
 
-        Collections.sort(shops, new Comparator<Shop>() {
+        Collections.sort(shops, new Comparator<ShopDTO>() {
             @Override
-            public int compare(Shop o1, Shop o2) {
+            public int compare(ShopDTO o1, ShopDTO o2) {
                 int valueComparison = Double.compare(o1.getValues(), o2.getValues());
                 if (valueComparison == 0) {
                     return o1.getName().compareTo(o2.getName());
@@ -103,11 +102,11 @@ public class PriceController {
     }
 
     @GetMapping("/shopping/increase/{regday}")
-    public List<Shop> getIShopping(@PathVariable("regday") String regday) {
-        List<Shop> shops = new ArrayList<>();
+    public List<ShopDTO> getIShopping(@PathVariable("regday") String regday) {
+        List<ShopDTO> shops = new ArrayList<>();
         List<Price> prices = priceService.findByRegdayOrderByValue(regday);
         for(Price price : prices){
-            Shop shop = new Shop();
+            ShopDTO shop = new ShopDTO();
             shop.setName(price.getItemCode().getItemName());
             shop.setKind(price.getKindName());
             shop.setUnit(price.getUnit());
@@ -128,9 +127,9 @@ public class PriceController {
             shops.add(shop);
         }
 
-        Collections.sort(shops, new Comparator<Shop>() {
+        Collections.sort(shops, new Comparator<ShopDTO>() {
             @Override
-            public int compare(Shop o1, Shop o2) {
+            public int compare(ShopDTO o1, ShopDTO o2) {
                 int valueComparison = Double.compare(o2.getValues(), o1.getValues());
                 if (valueComparison == 0) {
                     return o1.getName().compareTo(o2.getName());

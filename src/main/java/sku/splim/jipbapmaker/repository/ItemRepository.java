@@ -13,6 +13,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Item findByItemCode(int code);
     Item findByItemName(String name);
 
+    @Query(value = "select * from item", nativeQuery = true)
+    List<Item> findAll();
+
     @Query(value = "SELECT item_name FROM Item WHERE category_code = :code", nativeQuery = true)
     List<String> findItemNamesByCategoryCode(@Param("code") int code);
 

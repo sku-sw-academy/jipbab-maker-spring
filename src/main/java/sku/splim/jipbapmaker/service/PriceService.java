@@ -196,39 +196,32 @@ public class PriceService {
         priceDTO.setStatus(true);
 
         Price last = priceRepository.findFirstByNameOrderByIdDesc(name);
+        double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
 
-        if (last != null) {
-            if (last.getDpr1().equals("-")) {
-                priceDTO.setValues(0D);
+        if(!dpr2.equals("-")){
+            double dpr2_d = Double.parseDouble(dpr2.replace(",", ""));
+            if (dpr2_d == 0) {
+                priceDTO.setValues(dpr1_d);
             } else {
-                double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
-                double dpr2_d = Double.parseDouble(last.getDpr1().replace(",", ""));
-
-                if (dpr2_d == 0) {
-                    priceDTO.setValues(dpr1_d);
-                } else {
-                    double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
-                    String formattedValue = String.format("%.2f", value);
-                    double roundedValue = Double.parseDouble(formattedValue);
-                    priceDTO.setValues(roundedValue);
-                }
+                double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
+                String formattedValue = String.format("%.2f", value);
+                double roundedValue = Double.parseDouble(formattedValue);
+                priceDTO.setValues(roundedValue);
             }
+        } else if (last != null) {
+            double dpr2_d = Double.parseDouble(last.getDpr1().replace(",", ""));
+
+            if (dpr2_d == 0) {
+                priceDTO.setValues(dpr1_d);
+            } else {
+                double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
+                String formattedValue = String.format("%.2f", value);
+                double roundedValue = Double.parseDouble(formattedValue);
+                priceDTO.setValues(roundedValue);
+            }
+
         } else {
-            if (dpr2.equals("-")) {
-                priceDTO.setValues(0D);
-            } else {
-                double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
-                double dpr2_d = Double.parseDouble(dpr2.replace(",", ""));
-
-                if (dpr2_d == 0) {
-                    priceDTO.setValues(dpr1_d);
-                } else {
-                    double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
-                    String formattedValue = String.format("%.2f", value);
-                    double roundedValue = Double.parseDouble(formattedValue);
-                    priceDTO.setValues(roundedValue);
-                }
-            }
+            priceDTO.setValues(0D);
         }
 
         return priceDTO;
