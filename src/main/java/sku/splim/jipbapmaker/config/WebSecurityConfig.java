@@ -48,11 +48,11 @@ public class WebSecurityConfig {
                 .sessionManagement(configurer -> configurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable);
 //                .logout(logout -> logout
 //                        .logoutSuccessUrl("/login")
 //                        .invalidateHttpSession(true)
-                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

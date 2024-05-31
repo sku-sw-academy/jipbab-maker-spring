@@ -3,18 +3,25 @@ package sku.splim.jipbapmaker.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
+import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
+import sku.splim.jipbapmaker.repository.UserRepository;
+import sku.splim.jipbapmaker.service.ItemService;
+import sku.splim.jipbapmaker.service.PreferenceService;
 import sku.splim.jipbapmaker.service.UserService;
 
 @RequiredArgsConstructor
@@ -23,9 +30,15 @@ import sku.splim.jipbapmaker.service.UserService;
 public class UserApiController {
     private final UserService userService;
 
+    @Autowired
+    private final PreferenceService preferenceService;
+
+    private final UserRepository userRepository;
+
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody AddUserRequest request) {
         userService.save(request);
+        preferenceService.savePreference(request.getEmail());
         return ResponseEntity.ok("회원가입 성공");
     }
 
@@ -33,13 +46,6 @@ public class UserApiController {
     public ResponseEntity<AuthLoginResponse> login(@RequestBody AuthLoginRequest request) {
         AuthLoginResponse response = userService.login(request);
         return ResponseEntity.ok(response);
-    }
-
-
-    @PostMapping("/user")
-    public ResponseEntity<String> signup(@RequestBody AddUserRequest request) {
-        userService.save(request);
-        return ResponseEntity.ok("회원가입 성공");
     }
 
     @GetMapping("/logout")

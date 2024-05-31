@@ -1,10 +1,7 @@
 package sku.splim.jipbapmaker.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +11,7 @@ import java.util.List;
 
 @Table(name = "User")
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
@@ -48,7 +46,7 @@ public class User implements UserDetails {
     private String fcmToken;
 
     @Builder
-    public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken, String accessToken, String refreshToken) {
+    public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken) {
         this.id = id;
         this.email = email;
         this.password = password;

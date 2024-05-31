@@ -8,6 +8,7 @@ import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Price;
 import sku.splim.jipbapmaker.service.CategoryService;
 import sku.splim.jipbapmaker.service.ItemService;
+import sku.splim.jipbapmaker.service.PreferenceService;
 import sku.splim.jipbapmaker.service.PriceService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +59,9 @@ public class AppConfig {
     public CategoryService categoryService() {
         return new CategoryService();
     }
+
+    @Bean
+    public PreferenceService preferenceService(){return new PreferenceService();}
 
 
 }
