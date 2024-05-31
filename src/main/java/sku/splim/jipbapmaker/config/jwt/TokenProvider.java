@@ -1,9 +1,6 @@
 package sku.splim.jipbapmaker.config.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -56,16 +53,27 @@ public class TokenProvider {
     }
 
     public boolean validToken(String token) {
+        if(token == null || token.isEmpty()) return false;
         try {
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
             logger.info("Token is valid: {}", token);
             return true;
-        } catch (Exception e) {
-            logger.error("Invalid token: {}", token, e);
-            return false;
         }
+        catch (SecurityException | MalformedJwtException e){
+            logger.info("잘못된 JWT 서명입니다.");
+        }
+        catch (ExpiredJwtException e){
+            logger.info("만료된 JWT 서명입니다.");
+        }
+        catch (UnsupportedJwtException e){
+            logger.info("JWT 토큰이 잘못되었습니다.");
+        }
+        catch (Exception e) {
+            logger.error("Invalid token: {}", token, e);
+        }
+        return false;
     }
 
     public Authentication getAuthentication(String token) {
