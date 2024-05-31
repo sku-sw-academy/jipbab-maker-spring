@@ -3,6 +3,7 @@ package sku.splim.jipbapmaker.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +19,9 @@ import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
+import sku.splim.jipbapmaker.repository.UserRepository;
 import sku.splim.jipbapmaker.service.ItemService;
+import sku.splim.jipbapmaker.service.PreferenceService;
 import sku.splim.jipbapmaker.service.UserService;
 
 @RequiredArgsConstructor
@@ -26,12 +29,16 @@ import sku.splim.jipbapmaker.service.UserService;
 @RestController  // 변경: @Controller -> @RestController
 public class UserApiController {
     private final UserService userService;
-    private final ItemService itemService;
+
+    @Autowired
+    private final PreferenceService preferenceService;
+
+    private final UserRepository userRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody AddUserRequest request) {
         userService.save(request);
-        List<Item> items = itemService.getfindAll();
+        preferenceService.savePreference(request.getEmail());
         return ResponseEntity.ok("회원가입 성공");
     }
 
