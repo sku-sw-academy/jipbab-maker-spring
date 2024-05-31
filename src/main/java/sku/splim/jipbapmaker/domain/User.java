@@ -48,7 +48,7 @@ public class User implements UserDetails {
     private String fcmToken;
 
     @Builder
-    public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken, String accessToken, String refreshToken) {
+    public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken) {
         this.id = id;
         this.email = email;
         this.password = password;
