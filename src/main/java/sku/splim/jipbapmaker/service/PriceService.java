@@ -398,5 +398,31 @@ public class PriceService {
         return prices;
     }
 
+    public List<Price> getList(){
+        List<Price> prices = new ArrayList<>();
+        List<Item> items = itemService.getfindAll();
+
+        for(Item item : items){
+            List<String> names = priceRepository.findDistinctNamesByItemCode(item.getItemCode());
+            for(String name : names){
+                Price price = priceRepository.findLatestByProductName(name);
+                prices.add(price);
+            }
+        }
+
+        Collections.sort(prices, new Comparator<Price>() {
+            @Override
+            public int compare(Price o1, Price o2) {
+                int valueComparison = Double.compare(o1.getValues(), o2.getValues());
+                if (valueComparison == 0) {
+                    return o2.getName().compareTo(o1.getName());
+                }
+                return valueComparison;
+            }
+        });
+
+        return prices;
+    }
+
 }
 

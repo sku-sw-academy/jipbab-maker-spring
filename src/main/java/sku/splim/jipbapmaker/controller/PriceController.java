@@ -46,7 +46,6 @@ public class PriceController {
         List<Price> prices = priceService.findByRegdayOrderByValue(regday);
 
         if (prices.isEmpty()) {
-            // 데이터가 없으면 404 상태 코드를 반환
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -201,9 +200,22 @@ public class PriceController {
     }
 
     @GetMapping("/prefer/{id}")
-    public List<PriceDTO> getList(@PathVariable("id") long id){
+    public List<PriceDTO> getPreferList(@PathVariable("id") long id){
         List<PriceDTO> priceDTOs = new ArrayList<>();
         List<Price> prices = priceService.getPreferList(id);
+
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return priceDTOs;
+    }
+
+    @GetMapping("/list")
+    public List<PriceDTO> getList(){
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+        List<Price> prices = priceService.getList();
 
         for(Price price : prices){
             PriceDTO priceDTO = new PriceDTO();

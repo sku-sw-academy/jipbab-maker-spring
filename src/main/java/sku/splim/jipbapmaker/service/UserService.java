@@ -11,7 +11,7 @@ import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
 import sku.splim.jipbapmaker.repository.UserRepository;
-
+import java.util.*;
 import java.time.Duration;
 
 @RequiredArgsConstructor
@@ -46,6 +46,24 @@ public class UserService {
         } else {
             // 비밀번호가 일치하지 않는 경우 예외 발생
             throw new BadCredentialsException("Invalid email or password");
+        }
+    }
+
+    public List<String> getEmails(){
+        return userRepository.findAllEmails();
+    }
+
+    public void updateUserProfile(long id, String fileUrl){
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setProfile(fileUrl);
+            userRepository.save(user);
+            System.out.println("User profile updated successfully");
+        } else {
+            System.out.println("User not found with ID: " + id);
+            // 사용자를 찾을 수 없는 경우 예외 처리 또는 다른 처리를 수행할 수 있습니다.
         }
     }
 

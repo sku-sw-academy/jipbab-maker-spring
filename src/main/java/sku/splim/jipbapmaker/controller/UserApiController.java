@@ -12,8 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
@@ -62,4 +70,36 @@ public class UserApiController {
         User user = optionalUser.get();
         return UserDTO.convertToDTO(user);
     }
+
+    @GetMapping("/emails")
+    public List<String> getEmail() {
+        // 가짜 데이터 생성 (실제 데이터는 서비스에서 가져와야 함)
+        List<String> emails =userService.getEmails();
+        return emails;
+    }
+
+//    @PostMapping("/upload")
+//    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId,
+//                                              @RequestParam("image") MultipartFile imageFile) {
+//        try {
+//            // 파일 저장
+//            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
+//            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//
+//            // 파일 URL 생성
+//            String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                    .path("/uploads/")
+//                    .path(imageFile.getOriginalFilename())
+//                    .toUriString();
+//
+//            // 사용자 프로필 업데이트
+//            userService.updateUserProfile(userId, fileUrl);
+//
+//            return ResponseEntity.ok("Image uploaded successfully");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+//        }
+//    }
+
 }
