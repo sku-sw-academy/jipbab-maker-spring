@@ -1,11 +1,13 @@
 package sku.splim.jipbapmaker.service;
 
+import sku.splim.jipbapmaker.domain.Preference;
 import sku.splim.jipbapmaker.dto.CategoryDTO;
 import sku.splim.jipbapmaker.dto.ItemDTO;
 import sku.splim.jipbapmaker.dto.PriceDTO;
 import sku.splim.jipbapmaker.domain.Category;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Price;
+import sku.splim.jipbapmaker.dto.ShopDTO;
 import sku.splim.jipbapmaker.repository.CategoryRepository;
 import sku.splim.jipbapmaker.repository.ItemRepository;
 import sku.splim.jipbapmaker.repository.PriceRepository;
@@ -21,10 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PriceService {
@@ -54,6 +53,9 @@ public class PriceService {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private PreferenceService preferenceService;
 
     public List<Price> fetchPrices(String regday, Map<Integer, String> categoryMap) {
         List<Price> prices = new ArrayList<>();
@@ -367,6 +369,33 @@ public class PriceService {
             }
         }
         return null; // 모든 이름이 이미 리스트에 있으면 null을 반환합니다.
+    }
+
+    public List<Price> getPreferList(long id){
+        List<Price> prices = new ArrayList<>();
+        List<Preference> preferences = preferenceService.getPreferList(id, 0);
+
+        for(Preference preference : preferences){
+            Item item = preference.getItem();
+            List<String> names = priceRepository.findDistinctNamesByItemCode(item.getItemCode());
+            for(String name : names){
+                Price price = priceRepository.findLatestByProductName(name);
+                prices.add(price);
+            }
+        }
+
+        Collections.sort(prices, new Comparator<Price>() {
+            @Override
+            public int compare(Price o1, Price o2) {
+                int valueComparison = Double.compare(o1.getValues(), o2.getValues());
+                if (valueComparison == 0) {
+                    return o2.getName().compareTo(o1.getName());
+                }
+                return valueComparison;
+            }
+        });
+
+        return prices;
     }
 
 }

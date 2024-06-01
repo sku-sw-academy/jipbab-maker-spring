@@ -43,5 +43,11 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     @Query(value = "SELECT * FROM price WHERE item_code = :itemCode and kind_name = :kindName and rank_name = :rankName ORDER BY regday DESC", nativeQuery = true)
     List<Price> findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(@Param("itemCode")int itemCode, @Param("kindName")String kindName, @Param("rankName")String rankName);
 
+
+    @Query(value = "select distinct name from price where item_code = :itemCode", nativeQuery = true)
+    List<String> findDistinctNamesByItemCode(@Param("itemCode") int itemCode);
+
+    @Query(value = "select * from price where name = :name  order by regday desc limit 1", nativeQuery = true)
+    Price findLatestByProductName(@Param("name") String name);
 }
 

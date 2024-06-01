@@ -63,4 +63,25 @@ public class PreferenceController {
 
         return ResponseEntity.ok(preferenceDTO);
     }
+
+    @GetMapping("/list/{id}/{prefer}")
+    public ResponseEntity<List<PreferenceDTO>> getListPrefer(@PathVariable("id") Long id, @PathVariable("prefer") int prefer) {
+        List<Preference> preferences = preferenceService.getPreferList(id, prefer);
+        List<PreferenceDTO> preferenceDTOS = new ArrayList<>();
+
+        for(Preference preference : preferences){
+            PreferenceDTO dto = new PreferenceDTO();
+            ItemDTO itemDTO = new ItemDTO();
+            UserDTO userDTO = new UserDTO();
+
+            dto.setId(preference.getId());
+            dto.setItem(itemDTO.convertToDTO(preference.getItem()));
+            dto.setUser(userDTO.convertToDTO(preference.getUser()));
+            dto.setPrefer(preference.getPrefer());
+            preferenceDTOS.add(dto);
+        }
+
+        return ResponseEntity.ok(preferenceDTOS);
+    }
+
 }

@@ -200,4 +200,17 @@ public class PriceController {
         return priceDTOs;
     }
 
+    @GetMapping("/prefer/{id}")
+    public List<PriceDTO> getList(@PathVariable("id") long id){
+        List<PriceDTO> priceDTOs = new ArrayList<>();
+        List<Price> prices = priceService.getPreferList(id);
+
+        for(Price price : prices){
+            PriceDTO priceDTO = new PriceDTO();
+            priceDTOs.add(priceDTO.convertToDTO(price));
+        }
+
+        return priceDTOs;
+    }
+
 }

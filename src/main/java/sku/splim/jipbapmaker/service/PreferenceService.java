@@ -66,4 +66,9 @@ public class PreferenceService {
             throw new IllegalArgumentException("Preference with ID " + dto.getId() + " not found");
         }
     }
+
+    public List<Preference> getPreferList(long id, int prefer){
+        List<Preference> preferences = preferenceRepository.findByUserIdAndPrefer(id, prefer);
+        return preferences;
+    }
 }
