@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailAndNickname(String email, String nickname);
+    Optional<User> findById(long id);
 
     @Query("SELECT u.email FROM User u")
     List<String> findAllEmails();

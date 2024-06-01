@@ -67,4 +67,13 @@ public class UserService {
         }
     }
 
+    public void changeNickname(long id, String nickname){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setNickname(nickname);
+            userRepository.save(user);
+        }
+    }
+
 }

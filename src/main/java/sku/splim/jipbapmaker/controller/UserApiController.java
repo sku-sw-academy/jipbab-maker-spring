@@ -3,6 +3,7 @@ package sku.splim.jipbapmaker.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,28 +79,35 @@ public class UserApiController {
         return emails;
     }
 
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId,
-//                                              @RequestParam("image") MultipartFile imageFile) {
-//        try {
-//            // 파일 저장
-//            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
-//            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-//
-//            // 파일 URL 생성
-//            String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                    .path("/uploads/")
-//                    .path(imageFile.getOriginalFilename())
-//                    .toUriString();
-//
-//            // 사용자 프로필 업데이트
-//            userService.updateUserProfile(userId, fileUrl);
-//
-//            return ResponseEntity.ok("Image uploaded successfully");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
-//        }
-//    }
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
+        String uploadDir = "src/main/resources/static/assets/profile/";
+
+        try {
+            // 파일 저장
+            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 파일 URL 생성
+            String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/api/auth/uploads/")
+                    .path(imageFile.getOriginalFilename())
+                    .toUriString();
+
+            // 사용자 프로필 업데이트
+            userService.updateUserProfile(userId, fileUrl);
+
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+        }
+    }
+
+    @PostMapping("/nickName")
+    public ResponseEntity<String> changeNickName(@RequestParam("userId") Long userId, @RequestParam("NickName") String nickName) {
+        userService.changeNickname(userId, nickName);
+        return ResponseEntity.ok(nickName);
+    }
 
 }
