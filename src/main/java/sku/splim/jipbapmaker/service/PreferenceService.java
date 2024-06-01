@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Preference;
 import sku.splim.jipbapmaker.domain.User;
+import sku.splim.jipbapmaker.dto.PreferenceDTO;
 import sku.splim.jipbapmaker.repository.PreferenceRepository;
 import sku.splim.jipbapmaker.repository.UserRepository;
 
@@ -22,6 +23,8 @@ public class PreferenceService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PreferenceRepository preferenceRepository;
 
     public void savePreference(String email) {
         List<Preference> prefers = new ArrayList<>();
@@ -45,7 +48,22 @@ public class PreferenceService {
         }
     }
 
-    public List<Preference> listPreferences() {
-        return perferenceRepository.findAll();
+    public List<Preference> getListPreferences(long id) {
+        return perferenceRepository.findByUserId(id);
+    }
+
+    public Preference updatePreference(PreferenceDTO dto) {
+        // DTO로부터 엔티티를 가져옵니다.
+        Optional<Preference> optionalPreference = preferenceRepository.findById(dto.getId());
+        // 엔티티가 존재하는지 확인합니다.
+        if (optionalPreference.isPresent()) {
+            Preference preference = optionalPreference.get();
+            preference.setPrefer(dto.getPrefer());
+            // 변경된 엔티티를 저장소에 저장하고 반환합니다.
+            return preferenceRepository.save(preference);
+        } else {
+            // 엔티티가 존재하지 않는 경우에는 예외 처리를 합니다.
+            throw new IllegalArgumentException("Preference with ID " + dto.getId() + " not found");
+        }
     }
 }
