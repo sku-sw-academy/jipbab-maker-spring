@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import sku.splim.jipbapmaker.dto.PriceDTO;
+import sku.splim.jipbapmaker.dto.UserDTO;
 
 import java.util.Collection;
 import java.util.List;
@@ -91,5 +93,19 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static User convertToEntity(UserDTO userDTO) {
+        return User.builder()
+                .id(userDTO.getId())
+                .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
+                .nickname(userDTO.getNickname())
+                .profile(userDTO.getProfile())
+                .enabled(userDTO.isEnabled())
+                .push(userDTO.isPush())
+                .log(userDTO.isLog())
+                .fcmToken(userDTO.getFcmToken())
+                .build();
     }
 }

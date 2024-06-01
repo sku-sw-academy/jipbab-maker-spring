@@ -19,6 +19,7 @@ import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
+import sku.splim.jipbapmaker.dto.UserDTO;
 import sku.splim.jipbapmaker.repository.UserRepository;
 import sku.splim.jipbapmaker.service.ItemService;
 import sku.splim.jipbapmaker.service.PreferenceService;
@@ -52,5 +53,13 @@ public class UserApiController {
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return ResponseEntity.ok("로그아웃 성공");
+    }
+
+    @GetMapping("/user")
+    public UserDTO getUser() {
+        // 가짜 데이터 생성 (실제 데이터는 서비스에서 가져와야 함)
+        Optional<User> optionalUser = userRepository.findByEmail("limjh070@naver.com");
+        User user = optionalUser.get();
+        return UserDTO.convertToDTO(user);
     }
 }

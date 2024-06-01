@@ -3,6 +3,9 @@ package sku.splim.jipbapmaker.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import sku.splim.jipbapmaker.dto.PreferenceDTO;
+import sku.splim.jipbapmaker.dto.UserDTO;
+
 import java.sql.Timestamp;
 
 @Table(name = "Preference")
@@ -30,5 +33,16 @@ public class Preference {
 
     @Column(name = "updated_at", updatable = true)
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
+
+    public static Preference convertToEntity(PreferenceDTO dto){
+        Preference preference = new Preference();
+        Item item = new Item();
+        User user = new User();
+        preference.setId(dto.getId());
+        preference.setItem(item.convertToEntity(dto.getItem()));
+        preference.setUser(user.convertToEntity(dto.getUser()));
+        preference.setPrefer(dto.getPrefer());
+        return preference;
+    }
 
 }
