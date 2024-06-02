@@ -90,4 +90,15 @@ public class UserService {
         return "No such user";
     }
 
+    public String ResetProfile(long id){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setProfile("");
+            userRepository.save(user);
+            return "Ok";
+        }
+        return "No such user";
+    }
+
 }

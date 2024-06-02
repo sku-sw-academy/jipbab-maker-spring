@@ -94,6 +94,10 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/reset-profile")
+    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId) {
+        return ResponseEntity.ok(userService.ResetProfile(userId));
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
