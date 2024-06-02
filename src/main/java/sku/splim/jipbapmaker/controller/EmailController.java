@@ -38,12 +38,11 @@ public class EmailController {
             // 사용자가 존재하는 경우에만 비밀번호 발송
             User user = userOptional.get();
             String verificationCode = emailService.generatePassword(8);
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setPassword(bCryptPasswordEncoder.encode(verificationCode));
             userRepository.save(user);
-
             emailService.sendPassword(to, verificationCode);
             // 전송된 인증번호를 클라이언트에게 반환
-            return verificationCode;
+            return "Ok";
         } else {
             // 사용자가 존재하지 않는 경우 메시지 반환
             return "No";

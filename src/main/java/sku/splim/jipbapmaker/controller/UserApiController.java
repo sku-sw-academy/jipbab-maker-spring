@@ -97,7 +97,7 @@ public class UserApiController {
             // 사용자 프로필 업데이트
             userService.updateUserProfile(userId, fileUrl);
 
-            return ResponseEntity.ok("Image uploaded successfully");
+            return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
@@ -108,6 +108,12 @@ public class UserApiController {
     public ResponseEntity<String> changeNickName(@RequestParam("userId") Long userId, @RequestParam("NickName") String nickName) {
         userService.changeNickname(userId, nickName);
         return ResponseEntity.ok(nickName);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestParam("userId") Long userId, @RequestParam("current") String current, @RequestParam("new") String newPassword) {
+        String response = userService.ChangePassword(userId, current, newPassword);
+        return ResponseEntity.ok(response);
     }
 
 }

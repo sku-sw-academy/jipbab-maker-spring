@@ -76,4 +76,18 @@ public class UserService {
         }
     }
 
+    public String ChangePassword(long id, String current, String newPassword){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if(bCryptPasswordEncoder.matches(current, user.getPassword())){
+                user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return bCryptPasswordEncoder.encode(newPassword);
+            }else
+                return "Wrong password";
+        }
+        return "No such user";
+    }
+
 }

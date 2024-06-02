@@ -46,7 +46,7 @@ public class PriceBatch {
             LocalDate currentDate = LocalDate.now();
             String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            List<Price> prices = priceService.fetchPrices(regday, map);
+            List<Price> prices = priceService.fetchPrices("2024-06-01", map);
             return RepeatStatus.FINISHED;
         }
         );
