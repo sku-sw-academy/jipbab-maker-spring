@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -79,31 +82,6 @@ public class UserApiController {
         return emails;
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
-        String uploadDir = "src/main/resources/static/assets/profile/";
-
-        try {
-            // 파일 저장
-            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
-            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            // 파일 URL 생성
-            String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/auth/uploads/")
-                    .path(imageFile.getOriginalFilename())
-                    .toUriString();
-
-            // 사용자 프로필 업데이트
-            userService.updateUserProfile(userId, fileUrl);
-
-            return ResponseEntity.ok(fileUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
-        }
-    }
-
     @PostMapping("/nickName")
     public ResponseEntity<String> changeNickName(@RequestParam("userId") Long userId, @RequestParam("NickName") String nickName) {
         userService.changeNickname(userId, nickName);
@@ -116,4 +94,43 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
+        String uploadDir = "src/main/resources/static/assets/profile/";
+
+        try {
+            // 파일 저장
+            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 파일 URL 생성
+            String fileName = imageFile.getOriginalFilename();
+
+            // 사용자 프로필 업데이트
+            userService.updateUserProfile(userId, fileName);
+
+            return ResponseEntity.ok(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+        }
+    }
+
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
+        try {
+            Path filePath = Paths.get("src/main/resources/static/assets/profile/").resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
