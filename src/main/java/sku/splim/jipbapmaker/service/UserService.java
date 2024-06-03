@@ -1,15 +1,18 @@
 package sku.splim.jipbapmaker.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sku.splim.jipbapmaker.config.jwt.TokenProvider;
+import sku.splim.jipbapmaker.domain.RefreshToken;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
+import sku.splim.jipbapmaker.repository.RefreshTokenRepository;
 import sku.splim.jipbapmaker.repository.UserRepository;
 import java.util.*;
 import java.time.Duration;
@@ -20,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public Long save(AddUserRequest dto) {
         return userRepository.save(User.builder()
@@ -40,13 +44,24 @@ public class UserService {
 
         if (bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
             // 인증에 성공하면 토큰을 생성하고 반환
-            Duration tokenExpirationDuration = Duration.ofDays(1); // 1일 동안 유효
-            String accessToken = tokenProvider.generateToken(user, tokenExpirationDuration);
-            return AuthLoginResponse.of(user.getId(), accessToken);
+            Duration accessTokenExpirationDuration = Duration.ofHours(1); // 1시간 동안 유효
+            Duration refreshTokenExpirationDuration = Duration.ofDays(1); // 1일 동안 유효
+            String accessToken = tokenProvider.generateToken(user, accessTokenExpirationDuration);
+            String refreshToken = tokenProvider.generateToken(user, refreshTokenExpirationDuration);
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .user(user)
+                    .refreshToken(refreshToken)
+                    .build());
+            return AuthLoginResponse.of(user.getId(), accessToken, refreshToken);
         } else {
             // 비밀번호가 일치하지 않는 경우 예외 발생
             throw new BadCredentialsException("Invalid email or password");
         }
+    }
+
+    @Transactional
+    public void logout(User user) {
+        refreshTokenRepository.deleteByUser(user);
     }
 
     public List<String> getEmails(){

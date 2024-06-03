@@ -8,11 +8,13 @@ import lombok.Value;
 public class AuthLoginResponse {
     Long id;
     String accessToken;
+    String refreshToken;
 
-    public static AuthLoginResponse of(Long id, String accessToken) {
+    public static AuthLoginResponse of(Long id, String accessToken, String refreshToken) {
         return AuthLoginResponse.builder()
                 .id(id)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

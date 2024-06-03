@@ -3,17 +3,15 @@ package sku.splim.jipbapmaker.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,15 +23,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.User;
-import sku.splim.jipbapmaker.dto.AddUserRequest;
-import sku.splim.jipbapmaker.dto.AuthLoginRequest;
-import sku.splim.jipbapmaker.dto.AuthLoginResponse;
-import sku.splim.jipbapmaker.dto.UserDTO;
+import sku.splim.jipbapmaker.dto.*;
 import sku.splim.jipbapmaker.repository.UserRepository;
-import sku.splim.jipbapmaker.service.ItemService;
 import sku.splim.jipbapmaker.service.PreferenceService;
 import sku.splim.jipbapmaker.service.UserService;
 
@@ -61,10 +53,16 @@ public class UserApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-        return ResponseEntity.ok("로그아웃 성공");
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody AuthLogoutRequest request) {
+        // 요청에 포함된 사용자 정보를 기반으로 로그아웃 처리
+        User user = userService.findById(request.getId());
+        if (user != null) {
+            userService.logout(user); // 리프레시 토큰 삭제
+            return ResponseEntity.ok("로그아웃 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그아웃 실패: 유저 정보를 찾을 수 없음");
+        }
     }
 
     @GetMapping("/user")

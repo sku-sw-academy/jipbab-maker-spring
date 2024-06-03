@@ -1,11 +1,9 @@
 package sku.splim.jipbapmaker.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Table(name = "RefreshToken")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
@@ -36,4 +34,12 @@ public class RefreshToken {
     public Long getUserId() {
         return user != null ? user.getId() : null;
     }
+
+    @Builder
+    public RefreshToken(Long id, User user, String refreshToken) {
+        this.id = id;
+        this.user = user;
+        this.refreshToken = refreshToken;
+    }
+
 }
