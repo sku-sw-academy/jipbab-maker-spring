@@ -15,7 +15,7 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     Price findFirstByNameOrderByIdDesc(String name);
     List<Price> findByRegday(String regday);
 
-    @Query(value = "SELECT * FROM Price WHERE item_code = :itemCode ORDER BY regday desc, rank_code  limit 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM price WHERE item_code = :itemCode ORDER BY regday desc, rank_code  limit 1", nativeQuery = true)
     Price findLatestPriceByItemCode(@Param("itemCode") int code);
 
     @Transactional
@@ -25,7 +25,7 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     @Query("DELETE FROM Price p WHERE p.regday <= :thresholdDate")
     void deleteAllByRegdayBefore(@Param("thresholdDate") String regday);
 
-    @Query(value = "SELECT DISTINCT kind_name FROM Price WHERE item_code = :itemCode", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT kind_name FROM price WHERE item_code = :itemCode", nativeQuery = true)
     List<String> findDistinctKindNamesByItemCode(@Param("itemCode") int itemCode);
 
     @Query(value = "select distinct rank_name from price where kind_name = :kindName AND item_code = :itemCode", nativeQuery = true)
@@ -42,7 +42,6 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 
     @Query(value = "SELECT * FROM price WHERE item_code = :itemCode and kind_name = :kindName and rank_name = :rankName ORDER BY regday DESC", nativeQuery = true)
     List<Price> findByItemCodeAndKindNameAndRankNameOrderByRegdayDesc(@Param("itemCode")int itemCode, @Param("kindName")String kindName, @Param("rankName")String rankName);
-
 
     @Query(value = "select distinct name from price where item_code = :itemCode", nativeQuery = true)
     List<String> findDistinctNamesByItemCode(@Param("itemCode") int itemCode);
