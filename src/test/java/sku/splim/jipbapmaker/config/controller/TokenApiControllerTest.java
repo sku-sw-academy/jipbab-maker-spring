@@ -48,12 +48,12 @@ class TokenApiControllerTest {
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
 
-    @BeforeEach
-    public void mockMvcSetUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .build();
-        userRepository.deleteAll();
-    }
+//    @BeforeEach
+//    public void mockMvcSetUp() {
+//        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+//                .build();
+//        userRepository.deleteAll();
+//    }
 
     @DisplayName("createNewAccessToken: 새로운 액세스 토큰을 발급한다.")
     @Test
