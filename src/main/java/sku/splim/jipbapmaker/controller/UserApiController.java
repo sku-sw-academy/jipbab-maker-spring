@@ -23,10 +23,12 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import org.springframework.web.multipart.MultipartFile;
+import sku.splim.jipbapmaker.domain.RefreshToken;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.*;
 import sku.splim.jipbapmaker.repository.UserRepository;
 import sku.splim.jipbapmaker.service.PreferenceService;
+import sku.splim.jipbapmaker.service.RefreshTokenService;
 import sku.splim.jipbapmaker.service.UserService;
 
 @RequiredArgsConstructor
@@ -39,6 +41,8 @@ public class UserApiController {
     private final PreferenceService preferenceService;
 
     private final UserRepository userRepository;
+
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody AddUserRequest request) {
@@ -63,14 +67,6 @@ public class UserApiController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그아웃 실패: 유저 정보를 찾을 수 없음");
         }
-    }
-
-    @GetMapping("/user")
-    public UserDTO getUser() {
-        // 가짜 데이터 생성 (실제 데이터는 서비스에서 가져와야 함)
-        Optional<User> optionalUser = userRepository.findByEmail("limjh070@naver.com");
-        User user = optionalUser.get();
-        return UserDTO.convertToDTO(user);
     }
 
     @GetMapping("/emails")
@@ -133,6 +129,28 @@ public class UserApiController {
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("userInfo/{refreshToken}")
+    public ResponseEntity<UserDTO> getUserInfo(@PathVariable("refreshToken") String refreshToken) {
+        try {
+            Optional<RefreshToken> refreshTokenOptional = Optional.ofNullable(refreshTokenService.findByRefreshToken(refreshToken));
+            RefreshToken refreshToken1 = refreshTokenOptional.get();
+            User user = userService.findById(refreshToken1.getUserId());
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPassword(user.getPassword());
+            userDTO.setNickname(user.getNickname());
+            userDTO.setProfile(user.getProfile());
+            userDTO.setLog(user.isLog());
+            userDTO.setEnabled(user.isEnabled());
+            userDTO.setPush(user.isPush());
+            userDTO.setFcmToken(user.getFcmToken());
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
