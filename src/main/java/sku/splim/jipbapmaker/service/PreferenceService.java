@@ -12,6 +12,7 @@ import sku.splim.jipbapmaker.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PreferenceService {
@@ -70,5 +71,12 @@ public class PreferenceService {
     public List<Preference> getPreferList(long id, int prefer){
         List<Preference> preferences = preferenceRepository.findByUserIdAndPrefer(id, prefer);
         return preferences;
+    }
+
+    public List<String> getPreferListToString(Long userId, int prefer) {
+        List<Preference> preferences = preferenceRepository.findByUserIdAndPrefer(userId, prefer);
+        return preferences.stream()
+                .map(preference -> preference.getItem().getItemName()) // item의 이름을 가져온다고 가정
+                .collect(Collectors.toList());
     }
 }
