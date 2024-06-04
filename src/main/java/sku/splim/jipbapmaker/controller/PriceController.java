@@ -225,4 +225,9 @@ public class PriceController {
         return priceDTOs;
     }
 
+    @GetMapping("/last/regday")
+    public String getLastRegday(){
+        return priceService.findLatestPriceRegday();
+    }
+
 }

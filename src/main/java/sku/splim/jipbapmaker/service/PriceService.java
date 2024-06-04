@@ -424,5 +424,9 @@ public class PriceService {
         return prices;
     }
 
+    public String findLatestPriceRegday(){
+        return priceRepository.findLatestPriceRegday();
+    }
+
 }
 
