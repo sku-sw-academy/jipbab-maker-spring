@@ -95,7 +95,7 @@ public class UserApiController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
-        String uploadDir = "src/main/resources/static/assets/profile/";
+        String uploadDir = "/home/centos/app/assets/profile/";
 
         try {
             // 파일 저장
@@ -118,7 +118,7 @@ public class UserApiController {
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
         try {
-            Path filePath = Paths.get("src/main/resources/static/assets/profile/").resolve(filename).normalize();
+            Path filePath = Paths.get("/home/centos/app/assets/profile/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
