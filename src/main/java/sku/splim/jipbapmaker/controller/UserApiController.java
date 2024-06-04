@@ -9,19 +9,14 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-
 import org.springframework.web.multipart.MultipartFile;
 import sku.splim.jipbapmaker.domain.RefreshToken;
 import sku.splim.jipbapmaker.domain.User;
@@ -95,15 +90,28 @@ public class UserApiController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
+        // 유효성 검사: 이미지 파일이 제공되었는지 확인
+        if (imageFile == null || imageFile.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please provide an image file");
+        }
+
         String uploadDir = "/home/centos/app/assets/profile/";
 
         try {
             // 파일 저장
-            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
+            String originalFileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            Path uploadPath = Paths.get(uploadDir);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(originalFileName);
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // 파일 URL 생성
-            String fileName = imageFile.getOriginalFilename();
+            // 파일 생성
+            String fileName = filePath.getFileName().toString();
 
             // 사용자 프로필 업데이트
             userService.updateUserProfile(userId, fileName);
@@ -111,7 +119,10 @@ public class UserApiController {
             return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred: " + e.getMessage());
         }
     }
 

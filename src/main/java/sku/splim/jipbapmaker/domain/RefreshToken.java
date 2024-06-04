@@ -18,7 +18,7 @@ public class RefreshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "refresh_token", nullable = false)
+    @Column(name = "refresh_token", columnDefinition = "TEXT", nullable = false)
     private String refreshToken;
 
     public RefreshToken(User user, String refreshToken) {
