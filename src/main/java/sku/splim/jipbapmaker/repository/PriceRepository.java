@@ -48,5 +48,8 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
 
     @Query(value = "select * from price where name = :name  order by regday desc limit 1", nativeQuery = true)
     Price findLatestByProductName(@Param("name") String name);
+
+    @Query(value = "select distinct regday from price order by regday desc limit 1", nativeQuery = true)
+    String findLatestPriceRegday();
 }
 
