@@ -9,24 +9,21 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-
 import org.springframework.web.multipart.MultipartFile;
+import sku.splim.jipbapmaker.domain.RefreshToken;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.*;
 import sku.splim.jipbapmaker.repository.UserRepository;
 import sku.splim.jipbapmaker.service.PreferenceService;
+import sku.splim.jipbapmaker.service.RefreshTokenService;
 import sku.splim.jipbapmaker.service.UserService;
 
 @RequiredArgsConstructor
@@ -39,6 +36,8 @@ public class UserApiController {
     private final PreferenceService preferenceService;
 
     private final UserRepository userRepository;
+
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody AddUserRequest request) {
@@ -63,14 +62,6 @@ public class UserApiController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그아웃 실패: 유저 정보를 찾을 수 없음");
         }
-    }
-
-    @GetMapping("/user")
-    public UserDTO getUser() {
-        // 가짜 데이터 생성 (실제 데이터는 서비스에서 가져와야 함)
-        Optional<User> optionalUser = userRepository.findByEmail("limjh070@naver.com");
-        User user = optionalUser.get();
-        return UserDTO.convertToDTO(user);
     }
 
     @GetMapping("/emails")
@@ -99,15 +90,28 @@ public class UserApiController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("userId") Long userId, @RequestParam("image") MultipartFile imageFile) {
-        String uploadDir = "src/main/resources/static/assets/profile/";
+        // 유효성 검사: 이미지 파일이 제공되었는지 확인
+        if (imageFile == null || imageFile.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please provide an image file");
+        }
+
+        String uploadDir = "/home/centos/app/assets/profile/";
 
         try {
             // 파일 저장
-            Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
+            String originalFileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            Path uploadPath = Paths.get(uploadDir);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(originalFileName);
             Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // 파일 URL 생성
-            String fileName = imageFile.getOriginalFilename();
+            // 파일 생성
+            String fileName = filePath.getFileName().toString();
 
             // 사용자 프로필 업데이트
             userService.updateUserProfile(userId, fileName);
@@ -115,14 +119,17 @@ public class UserApiController {
             return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred: " + e.getMessage());
         }
     }
 
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
         try {
-            Path filePath = Paths.get("src/main/resources/static/assets/profile/").resolve(filename).normalize();
+            Path filePath = Paths.get("/home/centos/app/assets/profile/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
@@ -133,6 +140,28 @@ public class UserApiController {
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("userInfo/{refreshToken}")
+    public ResponseEntity<UserDTO> getUserInfo(@PathVariable("refreshToken") String refreshToken) {
+        try {
+            Optional<RefreshToken> refreshTokenOptional = Optional.ofNullable(refreshTokenService.findByRefreshToken(refreshToken));
+            RefreshToken refreshToken1 = refreshTokenOptional.get();
+            User user = userService.findById(refreshToken1.getUserId());
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPassword(user.getPassword());
+            userDTO.setNickname(user.getNickname());
+            userDTO.setProfile(user.getProfile());
+            userDTO.setLog(user.isLog());
+            userDTO.setEnabled(user.isEnabled());
+            userDTO.setPush(user.isPush());
+            userDTO.setFcmToken(user.getFcmToken());
+            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

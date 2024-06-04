@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import sku.splim.jipbapmaker.domain.Price;
@@ -43,10 +44,19 @@ public class PriceBatch {
             map.put(500, "축산물");
             map.put(600, "수산물");
 
-            LocalDate currentDate = LocalDate.now();
+            LocalDateTime now = LocalDateTime.now();
+            LocalDate currentDate;
+
+            // 현재 시간이 16시 이전이면 전날을 사용하고, 16시 이후면 당일을 사용
+            if (now.getHour() < 16) {
+                currentDate = now.minusDays(1).toLocalDate();
+            } else {
+                currentDate = now.toLocalDate();
+            }
+
             String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            List<Price> prices = priceService.fetchPrices("2024-06-02", map);
+            List<Price> prices = priceService.fetchPrices(regday, map);
             return RepeatStatus.FINISHED;
         }
         );
