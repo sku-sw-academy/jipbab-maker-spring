@@ -55,6 +55,7 @@ public class PriceBatch {
             }
 
             String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            System.out.println(regday);
 
             List<Price> prices = priceService.fetchPrices(regday, map);
             return RepeatStatus.FINISHED;
