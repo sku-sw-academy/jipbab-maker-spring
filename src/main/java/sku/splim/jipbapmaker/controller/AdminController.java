@@ -9,6 +9,7 @@ import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
 import sku.splim.jipbapmaker.dto.AuthLogoutRequest;
 import sku.splim.jipbapmaker.service.AdminService;
+import sku.splim.jipbapmaker.service.LogService;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
@@ -19,7 +20,6 @@ public class AdminController {
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestParam("email") String email, @RequestParam("name") String name, @RequestParam("password") String password) {
         adminService.save(email, name, password);
-
         return ResponseEntity.ok("회원가입 성공");
     }
 

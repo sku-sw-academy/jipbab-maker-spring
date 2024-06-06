@@ -28,6 +28,7 @@ public class AdminService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshToken_AdminRepository refreshToken_adminRepository;
+    private final LogService logService;
 
     public Long save(String email, String name, String passwrod) {
         return adminRepository.save(Admin.builder()
@@ -56,6 +57,7 @@ public class AdminService {
                     .admin(admin)
                     .refreshToken(refreshToken)
                     .build());
+            logService.login(admin);
             return AuthLoginResponse.of(admin.getId(), accessToken, refreshToken);
         } else {
             // 비밀번호가 일치하지 않는 경우 예외 발생
@@ -65,6 +67,7 @@ public class AdminService {
 
     @Transactional
     public void logout(Admin admin) {
+        logService.logOut(admin);
         refreshToken_adminRepository.deleteByAdmin(admin);
     }
 }

@@ -2,6 +2,8 @@ package sku.splim.jipbapmaker.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import sku.splim.jipbapmaker.dto.AdminDTO;
+import sku.splim.jipbapmaker.dto.UserDTO;
 
 import java.sql.Timestamp;
 
@@ -39,5 +41,12 @@ public class Admin {
         this.name = name;
     }
 
-
+    public static Admin convertToEntity(AdminDTO adminDTO) {
+        return Admin.builder()
+                .id(adminDTO.getId())
+                .email(adminDTO.getEmail())
+                .password(adminDTO.getPassword())
+                .name(adminDTO.getName())
+                .build();
+    }
 }
