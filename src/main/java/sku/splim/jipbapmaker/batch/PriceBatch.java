@@ -54,7 +54,6 @@ public class PriceBatch {
                 currentDate = now.toLocalDate();
             }
 
-
             String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             System.out.println(regday);
 

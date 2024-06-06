@@ -47,6 +47,8 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String fcmToken;
 
+    public User(){}
+
     @Builder
     public User(Long id, String email, String password, String nickname, String profile, boolean enabled, boolean push, boolean log, String fcmToken) {
         this.id = id;
