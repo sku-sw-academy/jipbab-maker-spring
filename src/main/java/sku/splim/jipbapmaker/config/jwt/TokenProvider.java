@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import sku.splim.jipbapmaker.domain.Admin;
 import sku.splim.jipbapmaker.domain.User;
 
 import java.security.Key;
@@ -30,6 +31,12 @@ public class TokenProvider {
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
     }
 
+    public String generateToken(Admin admin, Duration expiredAt) {
+        Date now = new Date();
+        logger.info("Generating token for user: {}", admin.getEmail());
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), admin);
+    }
+
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
         logger.info("Creating token with expiry date: {}", expiry);
@@ -48,6 +55,28 @@ public class TokenProvider {
                 .setExpiration(expiry)
                 .setSubject(user.getEmail())
                 .claim("id", user.getId())
+
+                .compact();
+    }
+
+    private String makeToken(Date expiry, Admin admin) {
+        Date now = new Date();
+        logger.info("Creating token with expiry date: {}", expiry);
+        logger.info("Issuer: {}", jwtProperties.getIssuer());
+        logger.info("Admin ID: {}", admin.getId());
+        logger.info("Admin Email: {}", admin.getEmail());
+
+        byte[] keyBytes = jwtProperties.getSecretKey().getBytes();
+        Key key = Keys.hmacShaKeyFor(keyBytes);
+
+        return Jwts.builder()
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer(jwtProperties.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .setSubject(admin.getEmail())
+                .claim("id", admin.getId())
 
                 .compact();
     }
