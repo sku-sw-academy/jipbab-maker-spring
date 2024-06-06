@@ -3,6 +3,9 @@ package sku.splim.jipbapmaker.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Not;
+import sku.splim.jipbapmaker.dto.FAQDTO;
+import sku.splim.jipbapmaker.dto.NoticeDTO;
 
 import java.sql.Timestamp;
 
@@ -34,5 +37,16 @@ public class Notice {
 
     public Notice(){
 
+    }
+
+    public Notice convertToEntity(NoticeDTO noticeDTO) {
+        Notice notice = new Notice();
+        notice.setId(noticeDTO.getId());
+        notice.setTitle(noticeDTO.getTitle());
+        notice.setContent(noticeDTO.getContent());
+        notice.setModifyDate(noticeDTO.getModifyDate());
+        Admin admin1 = new Admin();
+        notice.setAdmin(admin1.convertToEntity(noticeDTO.getAdminDTO()));
+        return notice;
     }
 }

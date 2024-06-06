@@ -65,6 +65,28 @@ public class AdminService {
         }
     }
 
+    public AuthLoginResponse login(String email, String password) {
+        Admin admin = adminRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Admin not found with email: " + email));
+
+        if (bCryptPasswordEncoder.matches(password, admin.getPassword())) {
+            // 인증에 성공하면 토큰을 생성하고 반환
+            Duration accessTokenExpirationDuration = Duration.ofHours(1); // 1시간 동안 유효
+            Duration refreshTokenExpirationDuration = Duration.ofDays(1); // 1일 동안 유효
+            String accessToken = tokenProvider.generateToken(admin, accessTokenExpirationDuration);
+            String refreshToken = tokenProvider.generateToken(admin, refreshTokenExpirationDuration);
+            refreshToken_adminRepository.save(RefreshToken_admin.builder()
+                    .admin(admin)
+                    .refreshToken(refreshToken)
+                    .build());
+            logService.login(admin);
+            return AuthLoginResponse.of(admin.getId(), accessToken, refreshToken);
+        } else {
+            // 비밀번호가 일치하지 않는 경우 예외 발생
+            throw new BadCredentialsException("Invalid email or password");
+        }
+    }
+
     @Transactional
     public void logout(Admin admin) {
         logService.logOut(admin);

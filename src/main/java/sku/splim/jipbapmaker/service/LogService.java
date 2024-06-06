@@ -1,5 +1,6 @@
 package sku.splim.jipbapmaker.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sku.splim.jipbapmaker.domain.Admin;
 import sku.splim.jipbapmaker.domain.Log;
@@ -7,6 +8,7 @@ import sku.splim.jipbapmaker.repository.LogRepository;
 
 @Service
 public class LogService {
+    @Autowired
     private LogRepository logRepository;
 
     public void login(Admin admin){

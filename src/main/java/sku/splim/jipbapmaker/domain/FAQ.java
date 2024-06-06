@@ -3,6 +3,8 @@ package sku.splim.jipbapmaker.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import sku.splim.jipbapmaker.dto.FAQDTO;
+import sku.splim.jipbapmaker.dto.QuestionDTO;
 
 import java.sql.Timestamp;
 
@@ -34,5 +36,16 @@ public class FAQ {
 
     public FAQ(){
 
+    }
+
+    public FAQ convertToEntity(FAQDTO faqdto) {
+        FAQ faq = new FAQ();
+        faq.setId(faqdto.getId());
+        faq.setTitle(faqdto.getTitle());
+        faq.setContent(faqdto.getContent());
+        faq.setModifyDate(faqdto.getModifyDate());
+        Admin admin1 = new Admin();
+        faq.setAdmin(admin1.convertToEntity(faqdto.getAdminDTO()));
+        return faq;
     }
 }
