@@ -6,10 +6,7 @@ import sku.splim.jipbapmaker.dto.PriceDTO;
 import sku.splim.jipbapmaker.domain.Category;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.domain.Price;
-import sku.splim.jipbapmaker.service.CategoryService;
-import sku.splim.jipbapmaker.service.ItemService;
-import sku.splim.jipbapmaker.service.PreferenceService;
-import sku.splim.jipbapmaker.service.PriceService;
+import sku.splim.jipbapmaker.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -63,5 +60,6 @@ public class AppConfig {
     @Bean
     public PreferenceService preferenceService(){return new PreferenceService();}
 
-
+    @Bean
+    public LogService logService(){return new LogService();}
 }
