@@ -1,10 +1,7 @@
 package sku.splim.jipbapmaker.domain;
 
+import jakarta.persistence.*;
 import sku.splim.jipbapmaker.dto.CategoryDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +24,18 @@ public class Category {
 
     @Column(name = "updated_at", updatable = true)
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
+
+    @PrePersist
+    protected void onCreate() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        createDate = now;
+        modifyDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifyDate = new Timestamp(System.currentTimeMillis());
+    }
 
     public Category convertToEntity(CategoryDTO categoryDTO) {
         Category category = new Category();
