@@ -39,6 +39,18 @@ public class Notice {
 
     }
 
+    @PrePersist
+    protected void onCreate() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        createDate = now;
+        modifyDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifyDate = new Timestamp(System.currentTimeMillis());
+    }
+
     public Notice convertToEntity(NoticeDTO noticeDTO) {
         Notice notice = new Notice();
         notice.setId(noticeDTO.getId());

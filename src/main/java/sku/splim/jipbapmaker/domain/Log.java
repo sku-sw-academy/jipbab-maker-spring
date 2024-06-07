@@ -36,6 +36,18 @@ public class Log {
 
     }
 
+    @PrePersist
+    protected void onCreate() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        createDate = now;
+        modifyDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifyDate = new Timestamp(System.currentTimeMillis());
+    }
+
     public Log convertToEntity(LogDTO logDTO) {
         Log log = new Log();
         log.setId(logDTO.getId());

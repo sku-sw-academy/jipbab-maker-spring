@@ -34,6 +34,18 @@ public class Question {
     @Column(name = "updated_at", updatable = true)
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
 
+    @PrePersist
+    protected void onCreate() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        createDate = now;
+        modifyDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifyDate = new Timestamp(System.currentTimeMillis());
+    }
+
     public Question(){
 
     }

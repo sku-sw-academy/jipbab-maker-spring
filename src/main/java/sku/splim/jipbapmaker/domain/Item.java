@@ -35,6 +35,18 @@ public class Item {
     @Column(name = "count")
     private int count;
 
+    @PrePersist
+    protected void onCreate() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        createDate = now;
+        modifyDate = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifyDate = new Timestamp(System.currentTimeMillis());
+    }
+
     public void incrementCount() {
         this.count += 1;
     }
