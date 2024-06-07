@@ -28,6 +28,9 @@ public class Question {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "status", nullable = false)
+    private boolean status;
+
     @Column(name = "created_at", updatable = false)
     private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 
@@ -56,6 +59,7 @@ public class Question {
         question.setTitle(questionDTO.getTitle());
         question.setContent(questionDTO.getContent());
         question.setModifyDate(questionDTO.getModifyDate());
+        question.setStatus(questionDTO.isStatus());
         User user = new User();
         question.setUser(user.convertToEntity(questionDTO.getUserDTO()));
 

@@ -143,7 +143,7 @@ public class UserApiController {
         }
     }
 
-    @GetMapping("userInfo/{refreshToken}")
+    @GetMapping("/userInfo/{refreshToken}")
     public ResponseEntity<UserDTO> getUserInfo(@PathVariable("refreshToken") String refreshToken) {
         try {
             Optional<RefreshToken> refreshTokenOptional = Optional.ofNullable(refreshTokenService.findByRefreshToken(refreshToken));
@@ -163,5 +163,25 @@ public class UserApiController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<User> users = userService.findAll();
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPassword(user.getPassword());
+            userDTO.setNickname(user.getNickname());
+            userDTO.setProfile(user.getProfile());
+            userDTO.setLog(user.isLog());
+            userDTO.setEnabled(user.isEnabled());
+            userDTO.setPush(user.isPush());
+            userDTO.setFcmToken(user.getFcmToken());
+            userDTOs.add(userDTO);
+        }
+        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
     }
 }

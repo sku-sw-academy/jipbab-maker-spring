@@ -1,6 +1,5 @@
 package sku.splim.jipbapmaker.dto;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import sku.splim.jipbapmaker.domain.Log;
@@ -17,16 +16,18 @@ public class QuestionDTO {
     private UserDTO userDTO;
     private String title;
     private String content;
+    private boolean status;
     private Timestamp createDate = new Timestamp(System.currentTimeMillis());
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
 
     public QuestionDTO(){}
 
-    public QuestionDTO(Long id, UserDTO userDTO, String title, String content){
+    public QuestionDTO(Long id, UserDTO userDTO, String title, String content, boolean status){
         this.id = id;
         this.userDTO = userDTO;
         this.title = title;
         this.content = content;
+        this.status = status;
     }
 
     public QuestionDTO convertToDTO(Question question) {
@@ -35,6 +36,7 @@ public class QuestionDTO {
         questionDTO.setTitle(question.getTitle());
         questionDTO.setContent(question.getContent());
         questionDTO.setModifyDate(question.getModifyDate());
+        questionDTO.setStatus(question.isStatus());
         UserDTO userDTO1 = new UserDTO();
         questionDTO.setUserDTO(userDTO1.convertToDTO(question.getUser()));
         return questionDTO;

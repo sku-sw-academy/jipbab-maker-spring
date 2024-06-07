@@ -7,11 +7,16 @@ import sku.splim.jipbapmaker.domain.FAQ;
 import sku.splim.jipbapmaker.domain.Log;
 import sku.splim.jipbapmaker.domain.Notice;
 import sku.splim.jipbapmaker.repository.LogRepository;
+import java.util.List;
 
 @Service
 public class LogService {
     @Autowired
     private LogRepository logRepository;
+
+    public List<Log> getLogs() {
+        return logRepository.findAllByOrderByModifyDateDesc();
+    }
 
     public void login(Admin admin){
         Log log = new Log();
