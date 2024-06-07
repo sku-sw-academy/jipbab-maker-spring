@@ -48,6 +48,7 @@ public class UserService {
             Duration refreshTokenExpirationDuration = Duration.ofDays(1); // 1일 동안 유효
             String accessToken = tokenProvider.generateToken(user, accessTokenExpirationDuration);
             String refreshToken = tokenProvider.generateToken(user, refreshTokenExpirationDuration);
+            user.setLog(true);
             refreshTokenRepository.save(RefreshToken.builder()
                     .user(user)
                     .refreshToken(refreshToken)
@@ -61,6 +62,7 @@ public class UserService {
 
     @Transactional
     public void logout(User user) {
+        user.setLog(false);
         refreshTokenRepository.deleteByUser(user);
     }
 
@@ -116,6 +118,7 @@ public class UserService {
         return "No such user";
     }
 
-
-
+    public List<User> findAll(){
+        return userRepository.findAll();
+    }
 }
