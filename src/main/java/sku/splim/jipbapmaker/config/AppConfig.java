@@ -62,4 +62,7 @@ public class AppConfig {
 
     @Bean
     public LogService logService(){return new LogService();}
+
+    @Bean
+    public QuestionService questionService(){return new QuestionService();}
 }
