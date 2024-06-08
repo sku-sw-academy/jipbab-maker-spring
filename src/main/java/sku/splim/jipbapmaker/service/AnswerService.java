@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sku.splim.jipbapmaker.domain.Answer;
 import sku.splim.jipbapmaker.domain.Question;
 import sku.splim.jipbapmaker.repository.AnswerRepository;
+import java.util.List;
 
 @Service
 public class AnswerService {
@@ -33,5 +34,13 @@ public class AnswerService {
         answerRepository.delete(answer);
         question.setStatus(false);
         logService.deleteQnA(answer);
+    }
+
+    public List<Answer> getAnswers(long id){
+        return answerRepository.findAllByAdminIdOrderByModifyDateDesc(id);
+    }
+
+    public Answer getQuestionAnswer(long id){
+        return answerRepository.findByQuestionId(id);
     }
 }
