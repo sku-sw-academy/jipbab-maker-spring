@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sku.splim.jipbapmaker.domain.Admin;
-import sku.splim.jipbapmaker.domain.FAQ;
 import sku.splim.jipbapmaker.domain.Notice;
 import sku.splim.jipbapmaker.repository.NoticeRepository;
 

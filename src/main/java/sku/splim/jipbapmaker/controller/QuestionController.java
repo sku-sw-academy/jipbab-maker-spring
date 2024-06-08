@@ -46,6 +46,25 @@ public class QuestionController {
         return dtos;
     }
 
+    @GetMapping("/all/false")
+    public List<QuestionDTO> getQuestionsFalse(){
+        List<Question> questions = questionService.findAllByStatusFalse();
+        List<QuestionDTO> dtos = new ArrayList<>();
+
+        for(Question question : questions){
+            QuestionDTO dto = new QuestionDTO();
+            dto.setId(question.getId());
+            dto.setTitle(question.getTitle());
+            dto.setContent(question.getContent());
+            dto.setStatus(question.isStatus());
+            dto.setModifyDate(question.getModifyDate());
+            UserDTO userDTO = new UserDTO();
+            dto.setUserDTO(userDTO.convertToDTO(question.getUser()));
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestParam("id") long id, @RequestParam("title") String title, @RequestParam("content") String content) {
         try {
