@@ -2,10 +2,7 @@ package sku.splim.jipbapmaker.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sku.splim.jipbapmaker.domain.Admin;
-import sku.splim.jipbapmaker.domain.FAQ;
-import sku.splim.jipbapmaker.domain.Log;
-import sku.splim.jipbapmaker.domain.Notice;
+import sku.splim.jipbapmaker.domain.*;
 import sku.splim.jipbapmaker.repository.LogRepository;
 import java.util.List;
 
@@ -74,10 +71,25 @@ public class LogService {
         logRepository.save(log);
     }
 
-    public void QnA(Admin admin){
+    public void QnA(Answer answer){
         Log log = new Log();
-        log.setAdmin(admin);
-        log.setContent("유저에게 답변 작성");
+        log.setAdmin(answer.getAdmin());
+        log.setContent("'" + answer.getQuestion().getTitle() + "' 답변 작성");
         logRepository.save(log);
     }
+
+    public void updateQnA(Answer answer){
+        Log log = new Log();
+        log.setAdmin(answer.getAdmin());
+        log.setContent("'" + answer.getQuestion().getTitle() + "' 답변 수정");
+        logRepository.save(log);
+    }
+
+    public void deleteQnA(Answer answer){
+        Log log = new Log();
+        log.setAdmin(answer.getAdmin());
+        log.setContent("'" + answer.getQuestion().getTitle() + "' 답변 삭제");
+        logRepository.save(log);
+    }
+
 }

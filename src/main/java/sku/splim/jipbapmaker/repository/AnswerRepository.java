@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findAllByOrderByModifyDateDesc();
+    List<Answer> findAllByAdminIdOrderByModifyDateDesc(long adminId);
+    Answer findByQuestionId(long questionId);
 }
