@@ -18,6 +18,7 @@ import sku.splim.jipbapmaker.service.QuestionService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/answer")
@@ -73,7 +74,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerDTOS);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/question/{id}")
     public ResponseEntity<AnswerDTO> getAnswer(@PathVariable("id") long id) {
         Answer answer = answerService.getQuestionAnswer(id);
         if (answer == null) {
@@ -92,5 +93,30 @@ public class AnswerController {
         answerDTO.setQuestion(questionDTO.convertToDTO(answer.getQuestion()));
 
         return ResponseEntity.ok().body(answerDTO);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteAnswer(@PathVariable("id") Long id) {
+        try {
+            Answer answer = answerService.findById(id);
+            answerService.delete(answer);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete answer");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateAnswer(@RequestBody Map<String, Object> payload) {
+        Long id = ((Number) payload.get("id")).longValue();
+        String content = (String) payload.get("content");
+
+        boolean isUpdated = answerService.updateAnswer(id, content);
+
+        if (isUpdated) {
+            return ResponseEntity.ok("답변이 성공적으로 수정되었습니다.");
+        } else {
+            return ResponseEntity.status(400).body("답변 수정에 실패했습니다.");
+        }
     }
 }
