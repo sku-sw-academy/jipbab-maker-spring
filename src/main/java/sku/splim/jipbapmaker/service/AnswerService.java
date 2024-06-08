@@ -7,6 +7,7 @@ import sku.splim.jipbapmaker.domain.Answer;
 import sku.splim.jipbapmaker.domain.Question;
 import sku.splim.jipbapmaker.repository.AnswerRepository;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AnswerService {
@@ -23,11 +24,6 @@ public class AnswerService {
         logService.QnA(answer);
     }
 
-    public void update(Answer answer) {
-        answerRepository.save(answer);
-        logService.updateQnA(answer);
-    }
-
     @Transactional
     public void delete(Answer answer) {
         Question question = answer.getQuestion();
@@ -36,11 +32,33 @@ public class AnswerService {
         logService.deleteQnA(answer);
     }
 
+    public Answer findById(Long id) {
+        return answerRepository.findById(id).orElse(null);
+    }
+
     public List<Answer> getAnswers(long id){
         return answerRepository.findAllByAdminIdOrderByModifyDateDesc(id);
     }
 
     public Answer getQuestionAnswer(long id){
         return answerRepository.findByQuestionId(id);
+    }
+
+    public boolean updateAnswer(Long id, String content) {
+        try {
+            Optional<Answer> answerOptional = answerRepository.findById(id);
+            if (answerOptional.isPresent()) {
+                Answer answer = answerOptional.get();
+                answer.setContent(content);
+                answerRepository.save(answer);
+                logService.updateQnA(answer);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
