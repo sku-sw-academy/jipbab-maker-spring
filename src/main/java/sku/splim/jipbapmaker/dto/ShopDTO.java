@@ -12,5 +12,6 @@ public class ShopDTO {
     String unit;
     String price;
     String week_price;
+    String image;
     double values;
 }
