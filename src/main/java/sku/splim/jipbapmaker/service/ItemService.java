@@ -48,7 +48,7 @@ public class ItemService {
 
     public void uploadImage(int code, String name){
         Item item = itemRepository.findByItemCode(code);
-        item.setItemName(name);
+        item.setImagePath(name);
         itemRepository.save(item);
     }
 

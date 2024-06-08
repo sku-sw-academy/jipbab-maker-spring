@@ -71,7 +71,7 @@ public class PriceController {
             shop.setRank(price.getRankName());
             shop.setPrice(price.getDpr1());
             shop.setWeek_price(price.getDpr3());
-
+            shop.setImage(price.getItemCode().getImagePath());
             if(!shop.getWeek_price().equals("-") && !shop.getWeek_price().equals("0")){
                 double dpr1_d = Double.parseDouble(shop.getPrice().replace(",", ""));
                 double dpr2_d = Double.parseDouble(shop.getWeek_price().replace(",", ""));
@@ -112,6 +112,7 @@ public class PriceController {
             shop.setRank(price.getRankName());
             shop.setPrice(price.getDpr1());
             shop.setWeek_price(price.getDpr3());
+            shop.setImage(price.getItemCode().getImagePath());
 
             if(!shop.getWeek_price().equals("-") && !shop.getWeek_price().equals("0")){
                 double dpr1_d = Double.parseDouble(shop.getPrice().replace(",", ""));
