@@ -21,4 +21,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "select * from item where count != 0 order by count desc limit 6", nativeQuery = true)
     List<Item> findTopItemsByCountNotZero();
+
+    @Query(value = "select * from item order by count desc", nativeQuery = true)
+    List<Item> findTopItemsByCountDesc();
 }
