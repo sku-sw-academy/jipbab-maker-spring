@@ -42,4 +42,14 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
+    public List<Item> findTopItemsByCountDesc(){
+        return itemRepository.findTopItemsByCountDesc();
+    }
+
+    public void uploadImage(int code, String name){
+        Item item = itemRepository.findByItemCode(code);
+        item.setItemName(name);
+        itemRepository.save(item);
+    }
+
 }
