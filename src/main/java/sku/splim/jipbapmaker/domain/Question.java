@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import sku.splim.jipbapmaker.dto.QuestionDTO;
-import sku.splim.jipbapmaker.dto.UserDTO;
-
+import java.util.List;
 import java.sql.Timestamp;
 
 @Table(name = "question")
@@ -48,6 +47,9 @@ public class Question {
     protected void onUpdate() {
         modifyDate = new Timestamp(System.currentTimeMillis());
     }
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers;
 
     public Question(){
 
