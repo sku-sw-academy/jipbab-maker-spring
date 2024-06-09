@@ -1,5 +1,6 @@
 package sku.splim.jipbapmaker.service;
 
+import sku.splim.jipbapmaker.domain.Admin;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private LogService logService;
 
     public List<String> getAllItemNames() {
         List<Item> items = itemRepository.findAll();
@@ -46,9 +49,10 @@ public class ItemService {
         return itemRepository.findTopItemsByCountDesc();
     }
 
-    public void uploadImage(int code, String name){
+    public void uploadImage(int code, String name, Admin admin){
         Item item = itemRepository.findByItemCode(code);
         item.setImagePath(name);
+        logService.upload(admin, item);
         itemRepository.save(item);
     }
 

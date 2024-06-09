@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sku.splim.jipbapmaker.domain.Admin;
 import sku.splim.jipbapmaker.domain.Item;
 import sku.splim.jipbapmaker.dto.CategoryDTO;
 import sku.splim.jipbapmaker.dto.ItemDTO;
 import sku.splim.jipbapmaker.repository.ItemRepository;
+import sku.splim.jipbapmaker.service.AdminService;
 import sku.splim.jipbapmaker.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +31,8 @@ public class ItemController {
 
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/names")
     public List<String> getAllItemNames(){
@@ -80,12 +84,12 @@ public class ItemController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("item_code") int code, @RequestParam("image") MultipartFile imageFile) {
+    public ResponseEntity<String> uploadImage(@RequestParam("item_code") int code, @RequestParam("id") long adminId, @RequestParam("image") MultipartFile imageFile) {
         // 유효성 검사: 이미지 파일이 제공되었는지 확인
         if (imageFile == null || imageFile.isEmpty()) {
             return ResponseEntity.badRequest().body("Please provide an image file");
         }
-
+        //src/java/resources/static/assets/images/
         String uploadDir = "/home/centos/app/assets/ingredient/";
 
         try {
@@ -103,9 +107,9 @@ public class ItemController {
 
             // 파일 생성
             String fileName = filePath.getFileName().toString();
-
+            Admin admin = adminService.findById(adminId);
             // 사용자 프로필 업데이트
-            itemService.uploadImage(code, fileName);
+            itemService.uploadImage(code, fileName, admin);
             return ResponseEntity.ok(fileName);
         } catch (IOException e) {
             e.printStackTrace();

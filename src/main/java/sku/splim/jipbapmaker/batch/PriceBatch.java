@@ -47,8 +47,8 @@ public class PriceBatch {
             LocalDateTime now = LocalDateTime.now();
             LocalDate currentDate;
 
-            // 현재 시간이 16시 이전이면 전날을 사용하고, 16시 이후면 당일을 사용
-            if (now.getHour() < 7) {
+            // 현재 시간이 7시 이전이면 전날을 사용하고, 7시 이후면 당일을 사용
+            if (now.getHour() < 16) {
                 currentDate = now.minusDays(1).toLocalDate();
             } else {
                 currentDate = now.toLocalDate();
