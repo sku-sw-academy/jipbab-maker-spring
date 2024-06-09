@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.email FROM User u")
     List<String> findAllEmails();
+
+    @Query(value = "SELECT * FROM user WHERE push = true", nativeQuery = true)
+    List<User> findAllByIsPush();
 }

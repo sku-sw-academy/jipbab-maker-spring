@@ -89,7 +89,7 @@ public class ItemController {
         if (imageFile == null || imageFile.isEmpty()) {
             return ResponseEntity.badRequest().body("Please provide an image file");
         }
-        //src/java/resources/static/assets/images/
+        //src/main/java/resources/static/assets/images/
         String uploadDir = "/home/centos/app/assets/ingredient/";
 
         try {

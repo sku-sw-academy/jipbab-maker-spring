@@ -12,9 +12,7 @@ import sku.splim.jipbapmaker.dto.AdminDTO;
 import sku.splim.jipbapmaker.dto.AnswerDTO;
 import sku.splim.jipbapmaker.dto.QuestionDTO;
 import sku.splim.jipbapmaker.dto.UserDTO;
-import sku.splim.jipbapmaker.service.AdminService;
-import sku.splim.jipbapmaker.service.AnswerService;
-import sku.splim.jipbapmaker.service.QuestionService;
+import sku.splim.jipbapmaker.service.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,10 @@ public class AnswerController {
     private QuestionService questionService;
     @Autowired
     private AdminService adminService;
-
+    @Autowired
+    private FCMService fcmService;
+    @Autowired
+    private NotificationListService notificationListService;
 
     @PostMapping("/send")
     public ResponseEntity<String> sendAnswer(@RequestParam("id") long id, @RequestParam("adminId") long adminId, @RequestParam("content") String content) {
@@ -43,7 +44,13 @@ public class AnswerController {
             answer.setContent(content);
             answer.setQuestion(question);
             answerService.save(answer);
-            // 성공적으로 전송된 메시지 반환
+
+            if(question.getUser().isPush()){
+                FCMService.sendFCMMessage(question.getUser().getFcmToken(), "문의답변 완료","문의에 답변이 완료되었습니다.");
+                // 성공적으로 전송된 메시지 반환
+                notificationListService.save(question.getUser(), "문의답변 완료", "문의에 답변이 완료되었습니다.");
+            }
+
             return ResponseEntity.ok("Answer successfully sent.");
         } catch (Exception e) {
             // 오류가 발생한 경우

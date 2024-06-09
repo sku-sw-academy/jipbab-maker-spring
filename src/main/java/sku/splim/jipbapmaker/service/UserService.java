@@ -12,6 +12,7 @@ import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.AddUserRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginRequest;
 import sku.splim.jipbapmaker.dto.AuthLoginResponse;
+import sku.splim.jipbapmaker.dto.UserDTO;
 import sku.splim.jipbapmaker.repository.RefreshTokenRepository;
 import sku.splim.jipbapmaker.repository.UserRepository;
 import java.util.*;
@@ -120,5 +121,19 @@ public class UserService {
 
     public List<User> findAll(){
         return userRepository.findAll();
+    }
+
+    public void updateUserPushSettings(UserDTO userDTO) {
+        Optional<User> optionalUser = userRepository.findById(userDTO.getId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setPush(userDTO.isPush());
+            user.setFcmToken(userDTO.getFcmToken());
+            userRepository.save(user);
+        }
+    }
+
+    public List<User> findAllByIsPush(){
+        return userRepository.findAllByIsPush();
     }
 }

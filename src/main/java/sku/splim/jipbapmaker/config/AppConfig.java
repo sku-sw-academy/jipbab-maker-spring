@@ -68,4 +68,9 @@ public class AppConfig {
 
     @Bean
     public AnswerService answerService(){return new AnswerService();}
+
+    @Bean
+    public FCMService fcmService(){return new FCMService();}
+
+
 }
