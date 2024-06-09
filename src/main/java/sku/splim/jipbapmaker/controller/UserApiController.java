@@ -184,4 +184,10 @@ public class UserApiController {
         }
         return new ResponseEntity<>(userDTOs, HttpStatus.OK);
     }
+
+    @PostMapping("/updatePushSettings")
+    public ResponseEntity<Void> updatePushSettings(@RequestBody UserDTO userDTO) {
+        userService.updateUserPushSettings(userDTO);
+        return ResponseEntity.ok().build();
+    }
 }
