@@ -11,6 +11,13 @@ public class LogService {
     @Autowired
     private LogRepository logRepository;
 
+    public void upload(Admin admin, Item item){
+        Log log = new Log();
+        log.setAdmin(admin);
+        log.setContent("'"+ item.getItemName() + "' 이미지 업로드");
+        logRepository.save(log);
+    }
+
     public List<Log> getLogs() {
         return logRepository.findAllByOrderByModifyDateDesc();
     }
