@@ -44,9 +44,13 @@ public class AnswerController {
             answer.setContent(content);
             answer.setQuestion(question);
             answerService.save(answer);
-            FCMService.sendFCMMessage(question.getUser().getFcmToken(), "알뜰집밥","문의하신 질문의 답변이 도착했습니다.");
-            // 성공적으로 전송된 메시지 반환
-            notificationListService.save(question.getUser(), "알뜰집밥", "문의하신 질문의 답변이 도착했습니다.");
+
+            if(question.getUser().isPush()){
+                FCMService.sendFCMMessage(question.getUser().getFcmToken(), "문의답변 완료","문의에 답변이 완료되었습니다.");
+                // 성공적으로 전송된 메시지 반환
+                notificationListService.save(question.getUser(), "문의답변 완료", "문의에 답변이 완료되었습니다.");
+            }
+
             return ResponseEntity.ok("Answer successfully sent.");
         } catch (Exception e) {
             // 오류가 발생한 경우

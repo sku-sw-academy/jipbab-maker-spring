@@ -1,5 +1,10 @@
 package sku.splim.jipbapmaker.batch;
 
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import sku.splim.jipbapmaker.domain.NotificationList;
+import sku.splim.jipbapmaker.domain.User;
+import sku.splim.jipbapmaker.service.FCMService;
+import sku.splim.jipbapmaker.service.NotificationListService;
 import sku.splim.jipbapmaker.service.PriceService;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -17,11 +22,21 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import sku.splim.jipbapmaker.domain.Price;
+import sku.splim.jipbapmaker.service.UserService;
 
 @Configuration
 public class PriceBatch {
     @Autowired
     private PriceService priceService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private FCMService fcmService;
+
+    @Autowired
+    private NotificationListService notificationListService;
 
     @Bean
     public Job PriceJob(JobRepository jobRepository, Step step) {
@@ -58,6 +73,13 @@ public class PriceBatch {
             System.out.println(regday);
 
             List<Price> prices = priceService.fetchPrices(regday, map);
+
+            List<User> users = userService.findAllByIsPush();
+            for(User user : users) {
+                fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 식재료 가격이 업데이트 되었습니다.");
+                notificationListService.save(user, "업데이트", "오늘의 식재료 가격이 업데이트 되었습니다.");
+            }
+
             return RepeatStatus.FINISHED;
         }
         );
