@@ -81,4 +81,10 @@ public class RecipeController {
         return ResponseEntity.ok(recipeDTOS);
     }
 
+    @PutMapping("/deleteAt/{id}")
+    public ResponseEntity<?> updateRecipeStatus(@PathVariable("id") Long id) {
+        recipeService.updateStatus(id); // RecipeService의 updateStatus 메서드 호출
+        return ResponseEntity.ok("Recipe status updated successfully.");
+    }
+
 }
