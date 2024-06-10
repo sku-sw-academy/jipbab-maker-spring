@@ -79,6 +79,6 @@ jobs:
           ssh-keyscan 210.178.40.81 >> ~/.ssh/known_hosts
 
       - name: Deploy to server
-        run: ssh -i ~/.ssh/id_rsa user@210.178.40.81 "docker pull jun73/jipbab:latest && docker stop jipbab || true && docker rm jipbab || true && docker run -d --name jipbab -p 8080:8080 jun73/jipbab:latest"
+        run: ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "docker pull jun73/jipbab:latest && docker stop jipbab || true && docker rm jipbab || true && docker run -d --name jipbab -p 8080:8080 jun73/jipbab:latest"
         env:
           GPT_KEY: ${{ secrets.GPT_KEY }}
