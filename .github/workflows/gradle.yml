@@ -78,8 +78,12 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 210.178.40.81 >> ~/.ssh/known_hosts
 
-      - name: Stop and remove existing container
-        run: ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "docker stop jipbab || true && docker rm jipbab || true"
+      - name: Stop and remove any container using port 8080
+        run: |
+          ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "
+          docker ps -q --filter 'publish=8080' | xargs -r docker stop;
+          docker ps -a -q --filter 'publish=8080' | xargs -r docker rm;
+          "
 
       - name: Deploy to server
         run: ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "docker pull jun73/jipbab:latest && docker stop jipbab || true && docker rm jipbab || true && docker run -d --name jipbab -p 8080:8080 jun73/jipbab:latest"
