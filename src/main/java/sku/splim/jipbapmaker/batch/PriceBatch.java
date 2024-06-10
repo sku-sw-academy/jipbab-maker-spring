@@ -1,6 +1,6 @@
 package sku.splim.jipbapmaker.batch;
 
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+
 import sku.splim.jipbapmaker.domain.NotificationList;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.service.FCMService;
@@ -62,7 +62,7 @@ public class PriceBatch {
             LocalDateTime now = LocalDateTime.now();
             LocalDate currentDate;
 
-            // 현재 시간이 7시 이전이면 전날을 사용하고, 7시 이후면 당일을 사용
+            // 현재 시간이 16시 이전이면 전날을 사용하고, 16시 이후면 당일을 사용
             if (now.getHour() < 16) {
                 currentDate = now.minusDays(1).toLocalDate();
             } else {
@@ -70,14 +70,16 @@ public class PriceBatch {
             }
 
             String regday = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            System.out.println(regday);
 
             List<Price> prices = priceService.fetchPrices(regday, map);
 
             List<User> users = userService.findAllByIsPush();
-            for(User user : users) {
-                fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 식재료 가격이 업데이트 되었습니다.");
-                notificationListService.save(user, "업데이트", "오늘의 식재료 가격이 업데이트 되었습니다.");
+
+            if(users.size() > 0) {
+                for(User user : users) {
+                    fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
+                    notificationListService.save(user, "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
+                }
             }
 
             return RepeatStatus.FINISHED;

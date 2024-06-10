@@ -13,7 +13,7 @@ import java.io.IOException;
 public class FirebaseConfig {
 
     @Bean
-    public FirebaseApp firebaseApp() throws IOException {
+    public FirebaseApp firebaseApp() throws IOException {     ///home/centos
         FileInputStream serviceAccount = new FileInputStream("src/main/resources/fcmtest-78202-firebase-adminsdk-xryu4-8e93d79c3a.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();

@@ -26,7 +26,7 @@ public class PriceBatchScheduler {
     private Job job;
 
     //@Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 0 7 * * *")
+    @Scheduled(cron = "0 0 16 * * *")
     public void runJob() throws Exception{
         System.out.println("Running job on thread: " + Thread.currentThread().getName());
         JobParameters jobParameters = new JobParametersBuilder().addString("jobName", "PriceJob1"+ System.currentTimeMillis()).toJobParameters();
