@@ -40,4 +40,5 @@ public class RecipeService {
         Optional<Recipe> optionalRecipe = recipeRepository.findById(id);
         return optionalRecipe.orElse(null); // ID로 레시피 찾기
     }
+
 }
