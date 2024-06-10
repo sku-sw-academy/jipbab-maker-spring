@@ -165,4 +165,27 @@ public class RecipeController {
         }
     }
 
+    @GetMapping("/share")
+    public ResponseEntity<List<RecipeDTO>> findShareRecipe() {
+        List<Recipe> recipes = recipeService.findAllByStatusOrderByModifyDateDesc();
+        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+
+        for(Recipe recipe : recipes) {
+            RecipeDTO recipeDTO = new RecipeDTO();
+            recipeDTO.setId(recipe.getId());
+            recipeDTO.setTitle(recipe.getTitle());
+            recipeDTO.setContent(recipe.getContent());
+            recipeDTO.setComment(recipe.getComment());
+            UserDTO userDTO = new UserDTO();
+            recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+            recipeDTO.setImage(recipe.getImage());
+            recipeDTO.setStatus(recipe.isStatus());
+            recipeDTO.setDeletedAt(recipe.isDeletedAt());
+            recipeDTO.setModifyDate(recipe.getModifyDate());
+            recipeDTOS.add(recipeDTO);
+        }
+
+        return ResponseEntity.ok(recipeDTOS);
+    }
+
 }

@@ -41,4 +41,8 @@ public class RecipeService {
         return optionalRecipe.orElse(null); // ID로 레시피 찾기
     }
 
+    public List<Recipe> findAllByStatusOrderByModifyDateDesc() {
+        return recipeRepository.findAllByStatusOrderByModifyDateDesc(true);
+    }
+
 }
