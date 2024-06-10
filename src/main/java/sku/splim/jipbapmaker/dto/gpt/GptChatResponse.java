@@ -8,4 +8,9 @@ import lombok.Value;
 public class GptChatResponse {
     String title;
     String content;
+
+    public GptChatResponse(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
