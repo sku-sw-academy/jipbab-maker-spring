@@ -9,4 +9,5 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findAllByOrderByModifyDateDesc();
     List<Recipe> findAllByUserIdAndDeletedAtFalseOrderByModifyDateDesc(Long userId);
+    List<Recipe> findAllByStatusOrderByModifyDateDesc(boolean status);
 }

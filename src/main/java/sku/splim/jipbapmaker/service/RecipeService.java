@@ -40,4 +40,17 @@ public class RecipeService {
         Optional<Recipe> optionalRecipe = recipeRepository.findById(id);
         return optionalRecipe.orElse(null); // ID로 레시피 찾기
     }
+
+    public List<Recipe> findAllByStatusOrderByModifyDateDesc() {
+        return recipeRepository.findAllByStatusOrderByModifyDateDesc(true);
+    }
+
+    public void updateNotShare(Long id){
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if(recipe.isPresent()){
+            Recipe updatedRecipe = recipe.get();
+            updatedRecipe.setStatus(false);
+            recipeRepository.save(updatedRecipe);
+        }
+    }
 }
