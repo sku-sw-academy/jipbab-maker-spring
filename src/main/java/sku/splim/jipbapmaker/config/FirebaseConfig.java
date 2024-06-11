@@ -14,7 +14,7 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {     ///home/centos  src/main/resources
-        FileInputStream serviceAccount = new FileInputStream("/home/centos /fcmtest-78202-firebase-adminsdk-xryu4-8e93d79c3a.json");
+        FileInputStream serviceAccount = new FileInputStream("/home/centos/fcmtest-78202-firebase-adminsdk-xryu4-8e93d79c3a.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
 

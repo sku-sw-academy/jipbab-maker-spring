@@ -11,6 +11,7 @@ public class CommentDTO {
     private String content;
     private UserDTO userDTO;
     private RecipeDTO recipeDTO;
+    private boolean update;
 
     public CommentDTO() {}
 
@@ -25,6 +26,7 @@ public class CommentDTO {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(comment.getId());
         commentDTO.setContent(comment.getContent());
+        commentDTO.setUpdate(comment.isUpdate());
         UserDTO userDTO = new UserDTO();
         commentDTO.setUserDTO(userDTO.convertToDTO(comment.getUser()));
         RecipeDTO recipeDTO = new RecipeDTO();

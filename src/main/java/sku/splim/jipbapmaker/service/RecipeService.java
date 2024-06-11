@@ -37,6 +37,7 @@ public class RecipeService {
         if(recipe.isPresent()){
             Recipe updatedRecipe = recipe.get();
             updatedRecipe.setDeletedAt(true);
+            updatedRecipe.setStatus(false);
             recipeRepository.save(updatedRecipe);
         }
     }
