@@ -35,7 +35,7 @@ public class RecipeDTO {
         this.deletedAt = deleted_at;
     }
 
-    public RecipeDTO convertToDTO(Recipe recipe) {
+    public static RecipeDTO convertToDTO(Recipe recipe) {
         RecipeDTO recipeDTO = new RecipeDTO();
         recipeDTO.setId(recipe.getId());
         recipeDTO.setTitle(recipe.getTitle());
