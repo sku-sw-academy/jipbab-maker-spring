@@ -99,4 +99,11 @@ public class LogService {
         logRepository.save(log);
     }
 
+    public void recipe(Admin admin, Recipe recipe){
+        Log log = new Log();
+        log.setAdmin(admin);
+        log.setContent("'" + recipe.getTitle() + "' 공유 중단");
+        logRepository.save(log);
+    }
+
 }

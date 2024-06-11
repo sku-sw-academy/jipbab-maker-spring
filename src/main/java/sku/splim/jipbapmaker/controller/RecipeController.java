@@ -133,15 +133,14 @@ public class RecipeController {
         return ResponseEntity.ok("ok");
     }
 
-
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("id") long id, @RequestParam("comment") String comment, @RequestParam("image") MultipartFile imageFile) {
         // 유효성 검사: 이미지 파일이 제공되었는지 확인
         if (imageFile == null || imageFile.isEmpty()) {
             return ResponseEntity.badRequest().body("Please provide an image file");
         }
-        // /home/centos/app/assets/recipe/
-        String uploadDir = "src/main/resources/static/assets/images/";
+        // /home/centos/app/assets/recipe/  src/main/resources/static/assets/images/
+        String uploadDir = "/home/centos/app/assets/recipe/";
 
         try {
             // 파일 저장
@@ -175,8 +174,8 @@ public class RecipeController {
 
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
-        try { ///home/centos/app/assets/recipe/
-            Path filePath = Paths.get("src/main/resources/static/assets/images/").resolve(filename).normalize();
+        try { ///home/centos/app/assets/recipe/ src/main/resources/static/assets/images/
+            Path filePath = Paths.get("/home/centos/app/assets/recipe/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
@@ -219,4 +218,31 @@ public class RecipeController {
         return ResponseEntity.ok("Recipe status updated successfully.");
     }
 
+    @GetMapping("/listAll")
+    public ResponseEntity<List<RecipeDTO>> getRecipes(){
+        List<Recipe> recipes = recipeService.getRecipes();
+        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+
+        for(Recipe recipe : recipes) {
+            RecipeDTO recipeDTO = new RecipeDTO();
+            recipeDTO.setId(recipe.getId());
+            recipeDTO.setTitle(recipe.getTitle());
+            recipeDTO.setContent(recipe.getContent());
+            recipeDTO.setComment(recipe.getComment());
+            UserDTO userDTO = new UserDTO();
+            recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+            recipeDTO.setImage(recipe.getImage());
+            recipeDTO.setStatus(recipe.isStatus());
+            recipeDTO.setDeletedAt(recipe.isDeletedAt());
+            recipeDTO.setModifyDate(recipe.getModifyDate());
+            recipeDTOS.add(recipeDTO);
+        }
+        return ResponseEntity.ok(recipeDTOS);
+    }
+
+    @PutMapping("/status/{id}/{adminId}")
+    public ResponseEntity<?> updateRecipeShareNot(@PathVariable("id") Long id, @PathVariable("adminId") Long adminId) {
+        recipeService.updateShareNotAdmin(id, adminId);// RecipeService의 updateStatus 메서드 호출
+        return ResponseEntity.ok("Recipe status updated successfully.");
+    }
 }

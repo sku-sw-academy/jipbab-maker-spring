@@ -75,7 +75,7 @@ public class PriceBatch {
 
             List<User> users = userService.findAllByIsPush();
 
-            if(users.size() > 0) {
+            if(users != null) {
                 for(User user : users) {
                     fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
                     notificationListService.save(user, "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
