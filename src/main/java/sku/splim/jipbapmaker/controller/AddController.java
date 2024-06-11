@@ -1,6 +1,7 @@
 package sku.splim.jipbapmaker.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sku.splim.jipbapmaker.domain.Addition;
@@ -40,4 +41,17 @@ public class AddController {
             return ResponseEntity.ok("Yes");
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAdd(@PathVariable("id") long id) {
+        try {
+            addService.deleteAdd(id);
+            return ResponseEntity.ok("Selected additional recipe deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete selected additional recipe: " + e.getMessage());
+        }
+    }
+
+
 }

@@ -8,4 +8,5 @@ import java.util.List;
 public interface AddRepository extends JpaRepository<Addition, Long> {
     List<Addition> findAllByUserIdOrderByModifyDate(Long userId);
     Addition findByUserIdAndRecipeId(Long userId, Long recipeId);
+    Addition findByRecipeId(Long recipeId);
 }

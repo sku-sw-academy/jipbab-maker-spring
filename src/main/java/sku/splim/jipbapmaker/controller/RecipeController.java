@@ -24,6 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -84,9 +86,10 @@ public class RecipeController {
                 recipeDTO.setImage(recipe.getImage());
                 recipeDTO.setStatus(recipe.isStatus());
                 recipeDTO.setDeletedAt(recipe.isDeletedAt());
-                recipeDTO.setModifyDate(recipe.getModifyDate());
+                recipeDTO.setModifyDate(addItem.getModifyDate());
                 recipeDTOS.add(recipeDTO);
             }
+            Collections.sort(recipeDTOS, Comparator.comparing(RecipeDTO::getModifyDate).reversed());
         }
 
         return ResponseEntity.ok(recipeDTOS);

@@ -1,6 +1,7 @@
 package sku.splim.jipbapmaker.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sku.splim.jipbapmaker.domain.Addition;
 import sku.splim.jipbapmaker.repository.AddRepository;
 import java.util.List;
@@ -23,5 +24,11 @@ public class AddService {
 
     public Addition findByUserIdAndRecipeId(Long userId, Long recipeId){
         return addRepository.findByUserIdAndRecipeId(userId, recipeId);
+    }
+
+    @Transactional
+    public void deleteAdd(long id) {
+        Addition addition = addRepository.findByRecipeId(id);
+        addRepository.delete(addition);
     }
 }
