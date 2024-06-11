@@ -45,4 +45,12 @@ public class RecipeService {
         return recipeRepository.findAllByStatusOrderByModifyDateDesc(true);
     }
 
+    public void updateNotShare(Long id){
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if(recipe.isPresent()){
+            Recipe updatedRecipe = recipe.get();
+            updatedRecipe.setStatus(false);
+            recipeRepository.save(updatedRecipe);
+        }
+    }
 }

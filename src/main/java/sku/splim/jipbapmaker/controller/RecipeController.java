@@ -188,4 +188,10 @@ public class RecipeController {
         return ResponseEntity.ok(recipeDTOS);
     }
 
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateRecipeShareNot(@PathVariable("id") Long id) {
+        recipeService.updateNotShare(id);// RecipeService의 updateStatus 메서드 호출
+        return ResponseEntity.ok("Recipe status updated successfully.");
+    }
+
 }
