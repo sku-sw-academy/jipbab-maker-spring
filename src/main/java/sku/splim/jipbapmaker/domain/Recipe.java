@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import sku.splim.jipbapmaker.dto.RecipeDTO;
-import sku.splim.jipbapmaker.dto.UserDTO;
-
 import java.sql.Timestamp;
 
 @Entity

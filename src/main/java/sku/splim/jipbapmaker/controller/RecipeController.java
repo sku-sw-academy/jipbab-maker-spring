@@ -9,11 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sku.splim.jipbapmaker.domain.Admin;
+import sku.splim.jipbapmaker.domain.Addition;
 import sku.splim.jipbapmaker.domain.Recipe;
 import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.RecipeDTO;
 import sku.splim.jipbapmaker.dto.UserDTO;
+import sku.splim.jipbapmaker.service.AddService;
 import sku.splim.jipbapmaker.service.RecipeService;
 import sku.splim.jipbapmaker.service.UserService;
 
@@ -32,6 +33,7 @@ public class RecipeController {
 
     private final RecipeService recipeService;
     private final UserService userService;
+    private final AddService addService;
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestParam("userId") long id, @RequestParam("title") String title, @RequestParam("content") String content) {
@@ -65,6 +67,26 @@ public class RecipeController {
             recipeDTO.setDeletedAt(recipe.isDeletedAt());
             recipeDTO.setModifyDate(recipe.getModifyDate());
             recipeDTOS.add(recipeDTO);
+        }
+
+        List<Addition> add = addService.findAllByUserIdOrderByModifyDate(id);
+
+        if(add != null) {
+            for(Addition addItem : add) {
+                Recipe recipe = addItem.getRecipe();
+                RecipeDTO recipeDTO = new RecipeDTO();
+                recipeDTO.setId(recipe.getId());
+                recipeDTO.setTitle(recipe.getTitle());
+                recipeDTO.setContent(recipe.getContent());
+                recipeDTO.setComment(recipe.getComment());
+                UserDTO userDTO = new UserDTO();
+                recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+                recipeDTO.setImage(recipe.getImage());
+                recipeDTO.setStatus(recipe.isStatus());
+                recipeDTO.setDeletedAt(recipe.isDeletedAt());
+                recipeDTO.setModifyDate(recipe.getModifyDate());
+                recipeDTOS.add(recipeDTO);
+            }
         }
 
         return ResponseEntity.ok(recipeDTOS);
