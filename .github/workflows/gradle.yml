@@ -1,67 +1,75 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: Java CI with Gradle, CD automate
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.3
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: 1q2w3e4r
+          MYSQL_DATABASE: splim
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+
     permissions:
       contents: read
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
 
-    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
 
-    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-    #
-    # - name: Setup Gradle
-    #   uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-    #   with:
-    #     gradle-version: '8.5'
-    #
-    # - name: Build with Gradle 8.5
-    #   run: gradle build
+      - name: Build Docker image
+        run: docker build -t jun73/jipbab:latest .
 
-  dependency-submission:
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
+      - name: Push Docker image
+        run: docker push jun73/jipbab:latest
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-    # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 210.178.40.81 >> ~/.ssh/known_hosts
+
+      - name: Stop and remove any container using port 8080
+        run: |
+          ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "
+          docker ps -q --filter 'publish=8080' | xargs -r docker stop;
+          docker ps -a -q --filter 'publish=8080' | xargs -r docker rm;
+          "
+
+      - name: Deploy to server
+        run: ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "docker pull jun73/jipbab:latest && docker stop jipbab || true && docker rm jipbab || true && docker run -d --name jipbab -p 8080:8080 jun73/jipbab:latest"
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://db-mysql:3306/splim?serverTimezone=Asia/Seoul
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
