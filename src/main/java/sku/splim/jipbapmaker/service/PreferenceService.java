@@ -79,4 +79,12 @@ public class PreferenceService {
                 .map(preference -> preference.getItem().getItemName()) // item의 이름을 가져온다고 가정
                 .collect(Collectors.toList());
     }
+
+    public Preference findByUserIdAndItem_ItemName(Long id, String itemName){
+        return perferenceRepository.findByUserIdAndItem_ItemName(id, itemName);
+    }
+
+    public void save(Preference preference){
+        preferenceRepository.save(preference);
+    }
 }

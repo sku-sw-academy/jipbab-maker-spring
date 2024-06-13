@@ -8,4 +8,5 @@ import java.util.List;
 public interface PreferenceRepository extends JpaRepository<Preference, Long> {
     List<Preference> findByUserId(long id);
     List<Preference> findByUserIdAndPrefer(long Id, int prefer);
+    Preference findByUserIdAndItem_ItemName(Long Id, String itemName);
 }
