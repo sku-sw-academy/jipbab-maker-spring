@@ -70,4 +70,11 @@ public class RecipeService {
             recipeRepository.save(updatedRecipe);
         }
     }
+
+    public String resetImage(Long id){
+        Recipe recipe = recipeRepository.findById(id).orElse(null);
+        recipe.setImage(null);
+        recipeRepository.save(recipe);
+        return "Ok";
+    }
 }

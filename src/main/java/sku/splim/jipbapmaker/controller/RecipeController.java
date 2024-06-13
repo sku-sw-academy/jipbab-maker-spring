@@ -76,18 +76,20 @@ public class RecipeController {
         if(add != null) {
             for(Addition addItem : add) {
                 Recipe recipe = addItem.getRecipe();
-                RecipeDTO recipeDTO = new RecipeDTO();
-                recipeDTO.setId(recipe.getId());
-                recipeDTO.setTitle(recipe.getTitle());
-                recipeDTO.setContent(recipe.getContent());
-                recipeDTO.setComment(recipe.getComment());
-                UserDTO userDTO = new UserDTO();
-                recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
-                recipeDTO.setImage(recipe.getImage());
-                recipeDTO.setStatus(recipe.isStatus());
-                recipeDTO.setDeletedAt(recipe.isDeletedAt());
-                recipeDTO.setModifyDate(addItem.getModifyDate());
-                recipeDTOS.add(recipeDTO);
+                if(!recipe.isDeletedAt()){
+                    RecipeDTO recipeDTO = new RecipeDTO();
+                    recipeDTO.setId(recipe.getId());
+                    recipeDTO.setTitle(recipe.getTitle());
+                    recipeDTO.setContent(recipe.getContent());
+                    recipeDTO.setComment(recipe.getComment());
+                    UserDTO userDTO = new UserDTO();
+                    recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+                    recipeDTO.setImage(recipe.getImage());
+                    recipeDTO.setStatus(recipe.isStatus());
+                    recipeDTO.setDeletedAt(recipe.isDeletedAt());
+                    recipeDTO.setModifyDate(addItem.getModifyDate());
+                    recipeDTOS.add(recipeDTO);
+                }
             }
             Collections.sort(recipeDTOS, Comparator.comparing(RecipeDTO::getModifyDate).reversed());
         }
@@ -175,7 +177,7 @@ public class RecipeController {
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
         try { ///home/centos/app/assets/recipe/ src/main/resources/static/assets/images/
-            Path filePath = Paths.get("/home/centos/app/assets/recipe/").resolve(filename).normalize();
+            Path filePath = Paths.get("src/main/resources/static/assets/images/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
@@ -245,4 +247,58 @@ public class RecipeController {
         recipeService.updateShareNotAdmin(id, adminId);// RecipeService의 updateStatus 메서드 호출
         return ResponseEntity.ok("Recipe status updated successfully.");
     }
+
+    @PostMapping("/save/image")
+    public ResponseEntity<String> saveImageAndComment(@RequestParam("id") long id, @RequestParam("comment") String comment, @RequestParam("image") MultipartFile imageFile) {
+        // 유효성 검사: 이미지 파일이 제공되었는지 확인
+        if (imageFile == null || imageFile.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please provide an image file");
+        }
+        // /home/centos/app/assets/recipe/  src/main/resources/static/assets/images/
+        String uploadDir = "src/main/resources/static/assets/images/";
+
+        try {
+            // 파일 저장
+            String originalFileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            Path uploadPath = Paths.get(uploadDir);
+
+            // 디렉토리가 존재하지 않으면 생성
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(originalFileName);
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 파일 생성
+            String fileName = filePath.getFileName().toString();
+            Recipe recipe = recipeService.findRecipeById(id);
+            recipe.setComment(comment);
+            recipe.setImage(fileName);
+            recipe.setStatus(false);
+            recipeService.saveRecipe(recipe);
+            return ResponseEntity.ok(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/save/review")
+    public ResponseEntity<String> saveReview(@RequestParam("id") long id, @RequestParam("comment") String comment) {
+        Recipe recipe = recipeService.findRecipeById(id);
+        recipe.setComment(comment);
+        recipe.setStatus(false);
+        recipeService.saveRecipe(recipe);
+        return ResponseEntity.ok("ok");
+    }
+
+    @PostMapping("/reset-image")
+    public ResponseEntity<String> resetImage(@RequestParam("recipeId") Long recipeId) {
+        return ResponseEntity.ok(recipeService.resetImage(recipeId));
+    }
+
 }
