@@ -177,7 +177,7 @@ public class RecipeController {
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
         try { ///home/centos/app/assets/recipe/ src/main/resources/static/assets/images/
-            Path filePath = Paths.get("src/main/resources/static/assets/images/").resolve(filename).normalize();
+            Path filePath = Paths.get("/home/centos/app/assets/recipe/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
@@ -255,7 +255,7 @@ public class RecipeController {
             return ResponseEntity.badRequest().body("Please provide an image file");
         }
         // /home/centos/app/assets/recipe/  src/main/resources/static/assets/images/
-        String uploadDir = "src/main/resources/static/assets/images/";
+        String uploadDir = "/home/centos/app/assets/recipe/";
 
         try {
             // 파일 저장
