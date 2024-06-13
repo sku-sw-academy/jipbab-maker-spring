@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 @RestController
 public class CommentController {
 
@@ -34,7 +34,7 @@ public class CommentController {
             comment.setContent(content);
             comment.setUser(user);
             comment.setRecipe(recipe);
-            comment.setUpdate(false);
+            comment.setUpdatedFlag(false);
             commentService.save(comment);
             return ResponseEntity.ok("Successfully sent comment");
         } catch (Exception e) {
@@ -52,9 +52,10 @@ public class CommentController {
                 CommentDTO commentDTO = new CommentDTO();
                 commentDTO.setId(comment.getId());
                 commentDTO.setContent(comment.getContent());
-                commentDTO.setUpdate(comment.isUpdate());
+                commentDTO.setUpdateFlag(comment.isUpdatedFlag());
                 commentDTO.setUserDTO(UserDTO.convertToDTO(comment.getUser()));
                 commentDTO.setRecipeDTO(RecipeDTO.convertToDTO(comment.getRecipe()));
+                commentDTO.setModifyDate(comment.getModifyDate());
                 commentDTOS.add(commentDTO);
             }
 
