@@ -27,7 +27,7 @@ public class CommentService {
     public void update(Long id, String content) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid comment Id:" + id));
         comment.setContent(content);
-        comment.setUpdate(true);
+        comment.setUpdatedFlag(true);
         commentRepository.save(comment);
     }
 

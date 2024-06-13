@@ -29,8 +29,8 @@ public class Comment {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "update", nullable = false)
-    private boolean update;
+    @Column(name = "updated_flag", nullable = false)
+    private boolean updatedFlag;
 
     @Column(name = "created_at", updatable = false)
     private Timestamp createDate;
@@ -51,7 +51,8 @@ public class Comment {
         Comment comment = new Comment();
         comment.setId(commentDTO.getId());
         comment.setContent(commentDTO.getContent());
-        comment.setUpdate(commentDTO.isUpdate());
+        comment.setUpdatedFlag(commentDTO.isUpdateFlag());
+        comment.setModifyDate(commentDTO.getModifyDate());
         User user = new User();
         comment.setUser(user);
         Recipe recipe = new Recipe();

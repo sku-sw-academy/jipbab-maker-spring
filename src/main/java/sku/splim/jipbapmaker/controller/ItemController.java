@@ -149,10 +149,27 @@ public class ItemController {
             itemDto.setItem_name(item.getItemName());
             itemDto.setCount(item.getCount());
             itemDto.setCategory(categoryDTO.convertToDTO(item.getCategoryCode()));
+            itemDto.setImagePath(item.getImagePath());
             itemDTOS.add(itemDto);
         }
 
         return ResponseEntity.ok(itemDTOS);
     }
+
+
+    @GetMapping("/prefer/{itemName}")
+    public ResponseEntity<ItemDTO> getItem(@PathVariable("itemName") String itemname){
+        Item item = itemService.findByItemName(itemname);
+        ItemDTO itemDto = new ItemDTO();
+        CategoryDTO categoryDTO = new CategoryDTO();
+        itemDto.setItem_code(item.getItemCode());
+        itemDto.setItem_name(item.getItemName());
+        itemDto.setCount(item.getCount());
+        itemDto.setCategory(categoryDTO.convertToDTO(item.getCategoryCode()));
+        itemDto.setImagePath(item.getImagePath());
+
+        return ResponseEntity.ok(itemDto);
+    }
+
 
 }
