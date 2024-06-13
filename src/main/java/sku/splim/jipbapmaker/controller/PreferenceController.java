@@ -84,4 +84,17 @@ public class PreferenceController {
         return ResponseEntity.ok(preferenceDTOS);
     }
 
+    @GetMapping("/{id}/{itemName}")
+    public ResponseEntity<PreferenceDTO> getPrefer(@PathVariable("id") Long id, @PathVariable("itemName") String itemName) {
+        Preference preference = preferenceService.findByUserIdAndItem_ItemName(id, itemName);
+        PreferenceDTO preferenceDTOS = new PreferenceDTO();
+        preferenceDTOS.setPrefer(preference.getPrefer());
+        preferenceDTOS.setId(preference.getId());
+        UserDTO userDTO = new UserDTO();
+        preferenceDTOS.setUser(userDTO.convertToDTO(preference.getUser()));
+        ItemDTO itemDTO = new ItemDTO();
+        preferenceDTOS.setItem(itemDTO.convertToDTO(preference.getItem()));
+        return ResponseEntity.ok(preferenceDTOS);
+    }
+
 }
