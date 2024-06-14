@@ -15,9 +15,11 @@ import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.RecipeDTO;
 import sku.splim.jipbapmaker.dto.UserDTO;
 import sku.splim.jipbapmaker.service.AddService;
+import sku.splim.jipbapmaker.service.CommentService;
 import sku.splim.jipbapmaker.service.RecipeService;
 import sku.splim.jipbapmaker.service.UserService;
-
+import sku.splim.jipbapmaker.dto.AllRecipe;
+import sku.splim.jipbapmaker.dto.RecipeAndCount;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +38,7 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final UserService userService;
     private final AddService addService;
+    private final CommentService commentService;
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestParam("userId") long id, @RequestParam("title") String title, @RequestParam("content") String content) {
@@ -76,7 +79,7 @@ public class RecipeController {
         if(add != null) {
             for(Addition addItem : add) {
                 Recipe recipe = addItem.getRecipe();
-                if(!recipe.isDeletedAt()){
+                if(!recipe.isDeletedAt() && recipe.isStatus()){
                     RecipeDTO recipeDTO = new RecipeDTO();
                     recipeDTO.setId(recipe.getId());
                     recipeDTO.setTitle(recipe.getTitle());
@@ -192,12 +195,12 @@ public class RecipeController {
     }
 
     @GetMapping("/share")
-    public ResponseEntity<List<RecipeDTO>> findShareRecipe() {
+    public ResponseEntity<List<RecipeAndCount>> findShareRecipe() {
         List<Recipe> recipes = recipeService.findAllByStatusOrderByModifyDateDesc();
-        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+        List<RecipeAndCount> recipeDTOS = new ArrayList<>();
 
         for(Recipe recipe : recipes) {
-            RecipeDTO recipeDTO = new RecipeDTO();
+            RecipeAndCount recipeDTO = new RecipeAndCount();
             recipeDTO.setId(recipe.getId());
             recipeDTO.setTitle(recipe.getTitle());
             recipeDTO.setContent(recipe.getContent());
@@ -208,6 +211,7 @@ public class RecipeController {
             recipeDTO.setStatus(recipe.isStatus());
             recipeDTO.setDeletedAt(recipe.isDeletedAt());
             recipeDTO.setModifyDate(recipe.getModifyDate());
+            recipeDTO.setCount(commentService.getCommentCountByRecipeId(recipe.getId()));
             recipeDTOS.add(recipeDTO);
         }
 
@@ -221,24 +225,48 @@ public class RecipeController {
     }
 
     @GetMapping("/listAll")
-    public ResponseEntity<List<RecipeDTO>> getRecipes(){
+    public ResponseEntity<List<AllRecipe>> getRecipes(){
         List<Recipe> recipes = recipeService.getRecipes();
-        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+        List<AllRecipe> recipeDTOS = new ArrayList<>();
 
         for(Recipe recipe : recipes) {
-            RecipeDTO recipeDTO = new RecipeDTO();
-            recipeDTO.setId(recipe.getId());
-            recipeDTO.setTitle(recipe.getTitle());
-            recipeDTO.setContent(recipe.getContent());
-            recipeDTO.setComment(recipe.getComment());
+            AllRecipe allRecipe = new AllRecipe();
+            allRecipe.setId(recipe.getId());
+            allRecipe.setTitle(recipe.getTitle());
+            allRecipe.setContent(recipe.getContent());
+            allRecipe.setComment(recipe.getComment());
             UserDTO userDTO = new UserDTO();
-            recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
-            recipeDTO.setImage(recipe.getImage());
-            recipeDTO.setStatus(recipe.isStatus());
-            recipeDTO.setDeletedAt(recipe.isDeletedAt());
-            recipeDTO.setModifyDate(recipe.getModifyDate());
-            recipeDTOS.add(recipeDTO);
+            allRecipe.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+            allRecipe.setImage(recipe.getImage());
+            allRecipe.setStatus(recipe.isStatus());
+            allRecipe.setDeletedAt(recipe.isDeletedAt());
+            allRecipe.setModifyDate(recipe.getModifyDate());
+            allRecipe.setOwner(true);
+            recipeDTOS.add(allRecipe);
         }
+
+        List<Addition> add = addService.findAll();
+
+        if(add != null) {
+            for(Addition addItem : add) {
+                Recipe recipe = addItem.getRecipe();
+                AllRecipe allRecipe = new AllRecipe();
+                allRecipe.setId(recipe.getId());
+                allRecipe.setTitle(recipe.getTitle());
+                allRecipe.setContent(recipe.getContent());
+                allRecipe.setComment(recipe.getComment());
+                UserDTO userDTO = new UserDTO();
+                allRecipe.setUserDTO(userDTO.convertToDTO(addItem.getUser()));
+                allRecipe.setImage(recipe.getImage());
+                allRecipe.setStatus(recipe.isStatus());
+                allRecipe.setDeletedAt(recipe.isDeletedAt());
+                allRecipe.setModifyDate(addItem.getModifyDate());
+                recipeDTOS.add(allRecipe);
+
+            }
+            Collections.sort(recipeDTOS, Comparator.comparing(AllRecipe::getModifyDate).reversed());
+        }
+
         return ResponseEntity.ok(recipeDTOS);
     }
 
@@ -299,6 +327,11 @@ public class RecipeController {
     @PostMapping("/reset-image")
     public ResponseEntity<String> resetImage(@RequestParam("recipeId") Long recipeId) {
         return ResponseEntity.ok(recipeService.resetImage(recipeId));
+    }
+
+    @GetMapping("/{id}/comments/count")
+    public long getCommentCount(@PathVariable("id") Long id) {
+        return commentService.getCommentCountByRecipeId(id);
     }
 
 }

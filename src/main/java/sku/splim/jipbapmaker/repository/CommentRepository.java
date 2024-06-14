@@ -6,4 +6,5 @@ import java.util.*;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByRecipeIdOrderByModifyDate(Long id);
+    long countByRecipeId(Long recipeId);
 }

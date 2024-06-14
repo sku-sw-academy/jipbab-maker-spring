@@ -31,4 +31,8 @@ public class AddService {
         Addition addition = addRepository.findByRecipeId(id);
         addRepository.delete(addition);
     }
+
+    public List<Addition> findAll() {
+        return addRepository.findAll();
+    }
 }
