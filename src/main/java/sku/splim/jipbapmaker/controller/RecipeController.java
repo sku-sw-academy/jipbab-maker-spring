@@ -17,7 +17,8 @@ import sku.splim.jipbapmaker.dto.UserDTO;
 import sku.splim.jipbapmaker.service.AddService;
 import sku.splim.jipbapmaker.service.RecipeService;
 import sku.splim.jipbapmaker.service.UserService;
-
+import sku.splim.jipbapmaker.dto.AllRecipe;
+import sku.splim.jipbapmaker.dto.RecipeAndCount;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,7 +77,7 @@ public class RecipeController {
         if(add != null) {
             for(Addition addItem : add) {
                 Recipe recipe = addItem.getRecipe();
-                if(!recipe.isDeletedAt()){
+                if(!recipe.isDeletedAt() && recipe.isStatus()){
                     RecipeDTO recipeDTO = new RecipeDTO();
                     recipeDTO.setId(recipe.getId());
                     recipeDTO.setTitle(recipe.getTitle());
@@ -221,24 +222,48 @@ public class RecipeController {
     }
 
     @GetMapping("/listAll")
-    public ResponseEntity<List<RecipeDTO>> getRecipes(){
+    public ResponseEntity<List<AllRecipe>> getRecipes(){
         List<Recipe> recipes = recipeService.getRecipes();
-        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+        List<AllRecipe> recipeDTOS = new ArrayList<>();
 
         for(Recipe recipe : recipes) {
-            RecipeDTO recipeDTO = new RecipeDTO();
-            recipeDTO.setId(recipe.getId());
-            recipeDTO.setTitle(recipe.getTitle());
-            recipeDTO.setContent(recipe.getContent());
-            recipeDTO.setComment(recipe.getComment());
+            AllRecipe allRecipe = new AllRecipe();
+            allRecipe.setId(recipe.getId());
+            allRecipe.setTitle(recipe.getTitle());
+            allRecipe.setContent(recipe.getContent());
+            allRecipe.setComment(recipe.getComment());
             UserDTO userDTO = new UserDTO();
-            recipeDTO.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
-            recipeDTO.setImage(recipe.getImage());
-            recipeDTO.setStatus(recipe.isStatus());
-            recipeDTO.setDeletedAt(recipe.isDeletedAt());
-            recipeDTO.setModifyDate(recipe.getModifyDate());
-            recipeDTOS.add(recipeDTO);
+            allRecipe.setUserDTO(userDTO.convertToDTO(recipe.getUser()));
+            allRecipe.setImage(recipe.getImage());
+            allRecipe.setStatus(recipe.isStatus());
+            allRecipe.setDeletedAt(recipe.isDeletedAt());
+            allRecipe.setModifyDate(recipe.getModifyDate());
+            allRecipe.setOwner(true);
+            recipeDTOS.add(allRecipe);
         }
+
+        List<Addition> add = addService.findAll();
+
+        if(add != null) {
+            for(Addition addItem : add) {
+                Recipe recipe = addItem.getRecipe();
+                AllRecipe allRecipe = new AllRecipe();
+                allRecipe.setId(recipe.getId());
+                allRecipe.setTitle(recipe.getTitle());
+                allRecipe.setContent(recipe.getContent());
+                allRecipe.setComment(recipe.getComment());
+                UserDTO userDTO = new UserDTO();
+                allRecipe.setUserDTO(userDTO.convertToDTO(addItem.getUser()));
+                allRecipe.setImage(recipe.getImage());
+                allRecipe.setStatus(recipe.isStatus());
+                allRecipe.setDeletedAt(recipe.isDeletedAt());
+                allRecipe.setModifyDate(addItem.getModifyDate());
+                recipeDTOS.add(allRecipe);
+
+            }
+            Collections.sort(recipeDTOS, Comparator.comparing(AllRecipe::getModifyDate).reversed());
+        }
+
         return ResponseEntity.ok(recipeDTOS);
     }
 
