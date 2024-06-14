@@ -7,15 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.3
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_PASSWORD: 1q2w3e4r
-          MYSQL_DATABASE: splim
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
 
     permissions:
       contents: read
