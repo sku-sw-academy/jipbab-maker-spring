@@ -68,9 +68,15 @@ jobs:
           "
 
       - name: Deploy to server
-        run: ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "docker pull jun73/jipbab:latest && docker stop jipbab || true && docker rm jipbab || true && docker run -d --name jipbab -p 8080:8080 jun73/jipbab:latest"
-        env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          GPT_KEY: ${{ secrets.GPT_KEY }}
+        run: |
+          ssh -i ~/.ssh/id_rsa centos@210.178.40.81 "
+          docker pull jun73/jipbab:latest;
+          docker stop jipbab || true;
+          docker rm jipbab || true;
+          docker run -d --name jipbab -p 8080:8080 \
+            -e SPRING_DATASOURCE_URL='${{ secrets.SPRING_DATASOURCE_URL }}' \
+            -e SPRING_DATASOURCE_USERNAME='${{ secrets.SPRING_DATASOURCE_USERNAME }}' \
+            -e SPRING_DATASOURCE_PASSWORD='${{ secrets.SPRING_DATASOURCE_PASSWORD }}' \
+            -e GPT_KEY='${{ secrets.GPT_KEY }}' \
+            jun73/jipbab:latest;
+          "
