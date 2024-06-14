@@ -18,5 +18,5 @@ public class RecipeAndCount {
     private boolean deletedAt;
     private Timestamp createDate;
     private Timestamp modifyDate;
-    int count;
+    private long count;
 }

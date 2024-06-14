@@ -15,6 +15,7 @@ import sku.splim.jipbapmaker.domain.User;
 import sku.splim.jipbapmaker.dto.RecipeDTO;
 import sku.splim.jipbapmaker.dto.UserDTO;
 import sku.splim.jipbapmaker.service.AddService;
+import sku.splim.jipbapmaker.service.CommentService;
 import sku.splim.jipbapmaker.service.RecipeService;
 import sku.splim.jipbapmaker.service.UserService;
 import sku.splim.jipbapmaker.dto.AllRecipe;
@@ -37,6 +38,7 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final UserService userService;
     private final AddService addService;
+    private final CommentService commentService;
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestParam("userId") long id, @RequestParam("title") String title, @RequestParam("content") String content) {
@@ -178,7 +180,7 @@ public class RecipeController {
     @GetMapping("/images/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable("filename") String filename) {
         try { ///home/centos/app/assets/recipe/ src/main/resources/static/assets/images/
-            Path filePath = Paths.get("src/main/resources/static/assets/images/").resolve(filename).normalize();
+            Path filePath = Paths.get("/home/centos/app/assets/recipe/").resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
@@ -193,12 +195,12 @@ public class RecipeController {
     }
 
     @GetMapping("/share")
-    public ResponseEntity<List<RecipeDTO>> findShareRecipe() {
+    public ResponseEntity<List<RecipeAndCount>> findShareRecipe() {
         List<Recipe> recipes = recipeService.findAllByStatusOrderByModifyDateDesc();
-        List<RecipeDTO> recipeDTOS = new ArrayList<>();
+        List<RecipeAndCount> recipeDTOS = new ArrayList<>();
 
         for(Recipe recipe : recipes) {
-            RecipeDTO recipeDTO = new RecipeDTO();
+            RecipeAndCount recipeDTO = new RecipeAndCount();
             recipeDTO.setId(recipe.getId());
             recipeDTO.setTitle(recipe.getTitle());
             recipeDTO.setContent(recipe.getContent());
@@ -209,6 +211,7 @@ public class RecipeController {
             recipeDTO.setStatus(recipe.isStatus());
             recipeDTO.setDeletedAt(recipe.isDeletedAt());
             recipeDTO.setModifyDate(recipe.getModifyDate());
+            recipeDTO.setCount(commentService.getCommentCountByRecipeId(recipe.getId()));
             recipeDTOS.add(recipeDTO);
         }
 
@@ -280,7 +283,7 @@ public class RecipeController {
             return ResponseEntity.badRequest().body("Please provide an image file");
         }
         // /home/centos/app/assets/recipe/  src/main/resources/static/assets/images/
-        String uploadDir = "src/main/resources/static/assets/images/";
+        String uploadDir = "/home/centos/app/assets/recipe/";
 
         try {
             // 파일 저장
@@ -324,6 +327,11 @@ public class RecipeController {
     @PostMapping("/reset-image")
     public ResponseEntity<String> resetImage(@RequestParam("recipeId") Long recipeId) {
         return ResponseEntity.ok(recipeService.resetImage(recipeId));
+    }
+
+    @GetMapping("/{id}/comments/count")
+    public long getCommentCount(@PathVariable("id") Long id) {
+        return commentService.getCommentCountByRecipeId(id);
     }
 
 }

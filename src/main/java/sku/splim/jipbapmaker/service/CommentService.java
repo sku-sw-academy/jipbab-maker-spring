@@ -38,4 +38,8 @@ public class CommentService {
         }
         commentRepository.deleteById(id);
     }
+
+    public long getCommentCountByRecipeId(Long recipeId) {
+        return commentRepository.countByRecipeId(recipeId);
+    }
 }
