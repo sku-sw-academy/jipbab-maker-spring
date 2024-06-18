@@ -56,6 +56,7 @@ public class CommentController {
                 commentDTO.setUserDTO(UserDTO.convertToDTO(comment.getUser()));
                 commentDTO.setRecipeDTO(RecipeDTO.convertToDTO(comment.getRecipe()));
                 commentDTO.setModifyDate(comment.getModifyDate());
+                commentDTO.setCreateDate(comment.getCreateDate());
                 commentDTOS.add(commentDTO);
             }
 

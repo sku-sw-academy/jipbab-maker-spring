@@ -37,6 +37,7 @@ public class QuestionDTO {
         questionDTO.setContent(question.getContent());
         questionDTO.setModifyDate(question.getModifyDate());
         questionDTO.setStatus(question.isStatus());
+        questionDTO.setCreateDate(question.getCreateDate());
         UserDTO userDTO1 = new UserDTO();
         questionDTO.setUserDTO(userDTO1.convertToDTO(question.getUser()));
         return questionDTO;

@@ -28,7 +28,7 @@ public class QuestionController {
 
     @GetMapping("/all/{userId}")
     public List<QuestionDTO> getQuestions(@PathVariable("userId") long userId){
-        List<Question> questions = questionService.findAllByUserIdByModifyDateDesc(userId);
+        List<Question> questions = questionService.findAllByUserIdOrderByCreateDateDesc(userId);
         List<QuestionDTO> dtos = new ArrayList<>();
 
         for(Question question : questions){
@@ -38,6 +38,7 @@ public class QuestionController {
             dto.setContent(question.getContent());
             dto.setStatus(question.isStatus());
             dto.setModifyDate(question.getModifyDate());
+            dto.setCreateDate(question.getCreateDate());
             UserDTO userDTO = new UserDTO();
             dto.setUserDTO(userDTO.convertToDTO(question.getUser()));
             dtos.add(dto);

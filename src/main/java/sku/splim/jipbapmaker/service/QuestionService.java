@@ -20,8 +20,8 @@ public class QuestionService {
         return questionRepository.findAllByOrderByModifyDateDesc();
     }
 
-    public List<Question> findAllByUserIdByModifyDateDesc(long userid) {
-        return questionRepository.findAllByUserIdOrderByModifyDateDesc(userid);
+    public List<Question> findAllByUserIdOrderByCreateDateDesc(long userid) {
+        return questionRepository.findAllByUserIdOrderByCreateDateDesc(userid);
     }
 
     @Transactional

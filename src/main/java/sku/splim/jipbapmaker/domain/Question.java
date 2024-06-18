@@ -61,6 +61,7 @@ public class Question {
         question.setTitle(questionDTO.getTitle());
         question.setContent(questionDTO.getContent());
         question.setModifyDate(questionDTO.getModifyDate());
+        question.setCreateDate(questionDTO.getCreateDate());
         question.setStatus(questionDTO.isStatus());
         User user = new User();
         question.setUser(user.convertToEntity(questionDTO.getUserDTO()));

@@ -5,6 +5,6 @@ import sku.splim.jipbapmaker.domain.Comment;
 import java.util.*;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByRecipeIdOrderByModifyDate(Long id);
+    List<Comment> findAllByRecipeIdOrderByCreateDateDesc(Long id);
     long countByRecipeId(Long recipeId);
 }

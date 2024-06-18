@@ -53,6 +53,7 @@ public class Comment {
         comment.setContent(commentDTO.getContent());
         comment.setUpdatedFlag(commentDTO.isUpdateFlag());
         comment.setModifyDate(commentDTO.getModifyDate());
+        comment.setCreateDate(commentDTO.getCreateDate());
         User user = new User();
         comment.setUser(user);
         Recipe recipe = new Recipe();

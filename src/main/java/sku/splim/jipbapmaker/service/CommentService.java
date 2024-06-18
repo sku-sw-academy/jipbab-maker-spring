@@ -16,7 +16,7 @@ public class CommentService {
     }
 
     public List<Comment> recipeComment(Long id) {
-        return commentRepository.findAllByRecipeIdOrderByModifyDate(id);
+        return commentRepository.findAllByRecipeIdOrderByCreateDateDesc(id);
     }
 
     public void save(Comment comment) {

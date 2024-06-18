@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByOrderByModifyDateDesc();
-    List<Question> findAllByUserIdOrderByModifyDateDesc(Long userId);
+    List<Question> findAllByUserIdOrderByCreateDateDesc(Long userId);
     List<Question> findAllByStatusFalse();
 
     @Transactional

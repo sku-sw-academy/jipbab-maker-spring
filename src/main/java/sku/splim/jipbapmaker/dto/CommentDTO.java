@@ -15,6 +15,7 @@ public class CommentDTO {
     private RecipeDTO recipeDTO;
     private boolean updateFlag;
     private Timestamp modifyDate;
+    private Timestamp createDate;
 
     public CommentDTO() {}
 
@@ -32,6 +33,7 @@ public class CommentDTO {
         commentDTO.setContent(comment.getContent());
         commentDTO.setUpdateFlag(comment.isUpdatedFlag());
         commentDTO.setModifyDate(comment.getModifyDate());
+        commentDTO.setCreateDate(comment.getCreateDate());
         UserDTO userDTO = new UserDTO();
         commentDTO.setUserDTO(userDTO.convertToDTO(comment.getUser()));
         RecipeDTO recipeDTO = new RecipeDTO();
