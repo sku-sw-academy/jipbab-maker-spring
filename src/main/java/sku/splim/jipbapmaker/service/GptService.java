@@ -1,16 +1,29 @@
 package sku.splim.jipbapmaker.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
+import com.theokanning.openai.image.CreateImageRequest;
 import com.theokanning.openai.service.OpenAiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sku.splim.jipbapmaker.config.GptProperties;
 import sku.splim.jipbapmaker.dto.gpt.GptChatResponse;
+import sku.splim.jipbapmaker.repository.RecipeRepository;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +33,7 @@ public class GptService {
     private static final Logger logger = LoggerFactory.getLogger(GptService.class);
 
     private final OpenAiService service;
+    private final RecipeRepository recipeRepository;
 
     private final static String GPT_MODEL = "gpt-4o";
 
@@ -28,8 +42,9 @@ public class GptService {
     private static final Duration DURATION = Duration.ofSeconds(120);
 
     @Autowired
-    public GptService(GptProperties gptProperties) {
+    public GptService(GptProperties gptProperties, RecipeRepository recipeRepository) {
         this.service = new OpenAiService(gptProperties.getApiKey(), DURATION);
+        this.recipeRepository = recipeRepository;
     }
 
     // Create a message to send to GPT
@@ -101,5 +116,15 @@ public class GptService {
         return new GptChatResponse(title, content);
     }
 
+    public String generatePicture(String prompt) {
+        CreateImageRequest createImageRequest = CreateImageRequest.builder()
+                .prompt(prompt)
+                .size("512x512")
+                .n(1)
+                .build();
+
+        String url = service.createImage(createImageRequest).getData().get(0).getUrl();
+        return url;
+    }
 }
 

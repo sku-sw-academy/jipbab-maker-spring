@@ -1,6 +1,8 @@
 package sku.splim.jipbapmaker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sku.splim.jipbapmaker.dto.gpt.GptChatRequest;
 import sku.splim.jipbapmaker.dto.gpt.GptChatResponse;
@@ -14,6 +16,7 @@ import java.util.List;
 public class GptController {
     private final GptService gptService;
     private final PreferenceService preferenceService;
+
     @Autowired
     public GptController(GptService gptService, PreferenceService preferenceService) {
         this.gptService = gptService;
@@ -35,5 +38,10 @@ public class GptController {
         return gptService.parseGptAnswer(gptAnswer);
     }
 
+    @PostMapping("/image")
+    public ResponseEntity<?> makeImage(@RequestBody String prompt) {
+        prompt = "A high-resolution photo of " + prompt + " on a white plate, professional food photography, studio lighting";
+        return new ResponseEntity<>(gptService.generatePicture(prompt), HttpStatus.OK);
+    }
 
 }
