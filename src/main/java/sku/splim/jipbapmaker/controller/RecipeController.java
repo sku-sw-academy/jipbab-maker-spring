@@ -81,7 +81,7 @@ public class RecipeController {
                 Recipe recipe = addItem.getRecipe();
                 if(!recipe.isDeletedAt() && recipe.isStatus()){
                     RecipeDTO recipeDTO = new RecipeDTO();
-                    recipeDTO.setId(addItem.getId());
+                    recipeDTO.setId(recipe.getId());
                     recipeDTO.setTitle(recipe.getTitle());
                     recipeDTO.setContent(recipe.getContent());
                     recipeDTO.setComment(recipe.getComment());

@@ -42,10 +42,10 @@ public class AddController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteAdd(@PathVariable("id") long id) {
+    @DeleteMapping("/delete/{userId}/{recipeId}")
+    public ResponseEntity<String> deleteAdd(@PathVariable("userId") long userId, @PathVariable("recipeId") long recipeId) {
         try {
-            addService.deleteAdd(id);
+            addService.deleteAdd(userId, recipeId);
             return ResponseEntity.ok("Selected additional recipe deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
