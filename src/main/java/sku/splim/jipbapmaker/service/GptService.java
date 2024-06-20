@@ -19,8 +19,8 @@ import sku.splim.jipbapmaker.repository.RecipeRepository;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -117,16 +117,33 @@ public class GptService {
 
     public void saveImage(String imageUrl) {
         try {
-            BufferedImage image = ImageIO.read(new URL(imageUrl));
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            connection.connect();
+
+            InputStream inputStream = new BufferedInputStream(connection.getInputStream());
             String fileName = extractFileName(imageUrl);
             String filePath = IMAGE_SAVE_DIRECTORY + fileName;
             File outputfile = new File(filePath);
-            ImageIO.write(image, "png", outputfile);
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(outputfile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+            }
+
+            inputStream.close();
+            connection.disconnect();
             logger.info("Image saved successfully: " + outputfile.getAbsolutePath());
         } catch (IOException e) {
             logger.error("Failed to save image: ", e);
         }
     }
+
 
     private String extractFileName(String url) {
         return url.substring(url.lastIndexOf('/') + 1);
@@ -147,11 +164,8 @@ public class GptService {
         String title = parsedAnswer[0];
         String content = parsedAnswer[1];
 
-        // 제목을 영어로 변환
-        String translatedTitle = translateToEnglish(title);
-
         // 이미지 생성 및 저장
-        String imageUrl = generatePicture(translatedTitle);
+        String imageUrl = generatePicture(translateToEnglish(title));
         saveImage(imageUrl);
 
         // GptResponse에 이미지 URL 추가
