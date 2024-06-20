@@ -20,6 +20,8 @@ import sku.splim.jipbapmaker.service.RecipeService;
 import sku.splim.jipbapmaker.service.UserService;
 import sku.splim.jipbapmaker.dto.AllRecipe;
 import sku.splim.jipbapmaker.dto.RecipeAndCount;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +43,9 @@ public class RecipeController {
     private final CommentService commentService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestParam("userId") long id, @RequestParam("title") String title, @RequestParam("content") String content) {
+    public ResponseEntity<String> save(@RequestParam("userId") long id, @RequestParam("title") String title,
+                                       @RequestParam("content") String content,
+                                       @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
         User user = userService.findById(id);
         Recipe recipe = new Recipe();
         recipe.setTitle(title);
@@ -50,8 +54,39 @@ public class RecipeController {
         recipe.setComment("");
         recipe.setStatus(false);
         recipe.setDeletedAt(false);
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = saveImage(imageFile);
+            recipe.setImage(fileName);
+        }
+
         recipeService.saveRecipe(recipe);
         return ResponseEntity.ok("ok");
+    }
+
+    private String saveImage(MultipartFile imageFile) {
+        // 이미지 저장 경로 설정 (필요에 따라 경로 수정)
+        String uploadPath = "/home/centos/app/assets/recipe/";
+        // 저장할 파일명 설정 (=원하는 방식으로 설정)
+
+        try {
+            // 이미지 파일 저장
+            String originalFileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
+            Path path = Paths.get(uploadPath);
+            // 디렉토리가 존재하지 않으면 생성
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            Path filePath = path.resolve(originalFileName);
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            // 파일 생성
+            String fileName = filePath.getFileName().toString();
+            return fileName; // 파일명 반환 또는 다른 식별자 반환
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 예외 처리: 이미지 저장 실패 시
+            throw new RuntimeException("Failed to save image file");
+        }
     }
 
     @GetMapping("/list/{userId}")

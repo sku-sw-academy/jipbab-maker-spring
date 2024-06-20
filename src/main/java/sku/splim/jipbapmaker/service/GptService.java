@@ -166,7 +166,7 @@ public class GptService {
 
         // 이미지 생성 및 저장
         String imageUrl = generatePicture(translateToEnglish(title));
-        saveImage(imageUrl);
+        //saveImage(imageUrl);
 
         // GptResponse에 이미지 URL 추가
         return GptResponse.builder()
