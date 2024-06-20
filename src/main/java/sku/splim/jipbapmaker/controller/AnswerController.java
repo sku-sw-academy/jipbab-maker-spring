@@ -45,7 +45,7 @@ public class AnswerController {
             answer.setQuestion(question);
             answerService.save(answer);
 
-            if(question.getUser().isPush()){
+            if(question.getUser().isPush() && question.getUser().isLog()){
                 FCMService.sendFCMMessage(question.getUser().getFcmToken(), "문의답변 완료","문의에 답변이 완료되었습니다.");
                 // 성공적으로 전송된 메시지 반환
                 notificationListService.save(question.getUser(), "문의답변 완료", "문의에 답변이 완료되었습니다.");

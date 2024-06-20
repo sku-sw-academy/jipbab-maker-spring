@@ -77,8 +77,10 @@ public class PriceBatch {
 
             if(users != null) {
                 for(User user : users) {
-                    fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
-                    notificationListService.save(user, "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
+                    if(user.isLog()){
+                        fcmService.sendFCMMessage(user.getFcmToken(), "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
+                        notificationListService.save(user, "업데이트", "오늘의 농수산물 가격이 업데이트 되었습니다.");
+                    }
                 }
             }
 

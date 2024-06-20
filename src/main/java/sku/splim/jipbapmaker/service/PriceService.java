@@ -173,7 +173,7 @@ public class PriceService {
             priceRepository.deleteAllByRegdayBefore(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         }
 
-        if (dpr1.equals("-") || (priceRepository.findById(id) != null)) {
+        if (dpr1.equals("-") || (priceRepository.findById(id) != null) ||dpr1.equals("0")) {
             return null;
         }
 
@@ -200,29 +200,29 @@ public class PriceService {
         Price last = priceRepository.findFirstByNameOrderByIdDesc(name);
         double dpr1_d = Double.parseDouble(dpr1.replace(",", ""));
 
-        if(!dpr2.equals("-")){
+        if (!dpr2.equals("-") && !dpr2.equals("0")) {
+            // dpr2 값이 "-"이 아니고 "0"도 아닌 경우, 변동 값을 계산합니다.
             double dpr2_d = Double.parseDouble(dpr2.replace(",", ""));
-            if (dpr2_d == 0) {
-                priceDTO.setValues(dpr1_d);
-            } else {
-                double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
-                String formattedValue = String.format("%.2f", value);
-                double roundedValue = Double.parseDouble(formattedValue);
-                priceDTO.setValues(roundedValue);
-            }
+            double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0; // 변동 값을 퍼센트로 계산합니다.
+            String formattedValue = String.format("%.2f", value); // 소수점 두 자리까지 포맷팅합니다.
+            double roundedValue = Double.parseDouble(formattedValue);
+            priceDTO.setValues(roundedValue); // 계산된 값을 설정합니다.
         } else if (last != null) {
+            // dpr2 값이 "-"이거나 "0"이고, 마지막 레코드가 존재하는 경우
             double dpr2_d = Double.parseDouble(last.getDpr1().replace(",", ""));
 
             if (dpr2_d == 0) {
-                priceDTO.setValues(dpr1_d);
+                // 마지막 레코드의 dpr1 값이 0인 경우
+                priceDTO.setValues(0D);
             } else {
+                // 변동 값을 퍼센트로 계산합니다.
                 double value = (dpr1_d - dpr2_d) / dpr2_d * 100.0;
-                String formattedValue = String.format("%.2f", value);
+                String formattedValue = String.format("%.2f", value); // 소수점 두 자리까지 포맷팅합니다.
                 double roundedValue = Double.parseDouble(formattedValue);
-                priceDTO.setValues(roundedValue);
+                priceDTO.setValues(roundedValue); // 계산된 값을 설정합니다.
             }
-
         } else {
+            // dpr2 값이 "-"이거나 "0"이고, 마지막 레코드가 존재하지 않는 경우
             priceDTO.setValues(0D);
         }
 
