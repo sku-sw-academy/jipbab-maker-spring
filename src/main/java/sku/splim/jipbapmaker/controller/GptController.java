@@ -1,11 +1,9 @@
 package sku.splim.jipbapmaker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sku.splim.jipbapmaker.dto.gpt.GptChatRequest;
-import sku.splim.jipbapmaker.dto.gpt.GptChatResponse;
+import sku.splim.jipbapmaker.dto.gpt.GptRequest;
+import sku.splim.jipbapmaker.dto.gpt.GptResponse;
 import sku.splim.jipbapmaker.service.GptService;
 import sku.splim.jipbapmaker.service.PreferenceService;
 
@@ -24,7 +22,7 @@ public class GptController {
     }
 
     @PostMapping("/recipe")
-    public GptChatResponse makeRecipe(@RequestBody GptChatRequest request) {
+    public GptResponse makeRecipe(@RequestBody GptRequest request) {
         List<String> preferences = preferenceService.getPreferListToString(request.getId(), 0);
         List<String> nonPreferences = preferenceService.getPreferListToString(request.getId(), 2);
         String foodList = String.format("preferences : %s, non-preferences : %s, ThriftyItems : %s",
@@ -32,16 +30,7 @@ public class GptController {
                 String.join(", ", nonPreferences),
                 request.getThriftyItems());
 
-        String gptAnswer = gptService.getGptAnswer(foodList);
-        System.out.println(gptService.parseGptAnswer(gptAnswer));
-
-        return gptService.parseGptAnswer(gptAnswer);
-    }
-
-    @PostMapping("/image")
-    public ResponseEntity<?> makeImage(@RequestBody String prompt) {
-        prompt = "A high-resolution photo of " + prompt + " on a white plate, professional food photography, studio lighting";
-        return new ResponseEntity<>(gptService.generatePicture(prompt), HttpStatus.OK);
+        return gptService.generateRecipeWithImage(foodList);
     }
 
 }

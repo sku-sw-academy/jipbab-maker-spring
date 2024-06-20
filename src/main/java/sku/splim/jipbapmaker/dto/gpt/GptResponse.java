@@ -5,12 +5,14 @@ import lombok.Value;
 
 @Value
 @Builder
-public class GptChatResponse {
+public class GptResponse {
     String title;
     String content;
+    String imageUrl; // 이미지 URL 필드 추가
 
-    public GptChatResponse(String title, String content) {
+    public GptResponse(String title, String content, String imageUrl) {
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
     }
 }

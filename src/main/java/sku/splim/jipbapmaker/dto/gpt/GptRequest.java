@@ -4,12 +4,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Data
 @Getter
 @Setter
-public class GptChatRequest {
+public class GptRequest {
     private Long id;
     private String thriftyItems;  // 알뜰
 }
