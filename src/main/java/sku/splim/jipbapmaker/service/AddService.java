@@ -27,8 +27,8 @@ public class AddService {
     }
 
     @Transactional
-    public void deleteAdd(long id) {
-        Addition addition = addRepository.findById(id);
+    public void deleteAdd(long userId, long recipeId) {
+        Addition addition = addRepository.findByUserIdAndRecipeId(userId, recipeId);
         addRepository.delete(addition);
     }
 
