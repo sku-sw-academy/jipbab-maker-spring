@@ -49,7 +49,6 @@ public class GptController {
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate currentDate;
-
 // 현재 시간이 16시 이전이면 전날을 사용하고, 16시 이후면 당일을 사용
         if (now.getHour() < 16) {
             currentDate = now.minusDays(1).toLocalDate();
@@ -68,7 +67,6 @@ public class GptController {
 
         return gptService.generateRecipeWithImage(foodList);
     }
-
 
     private String convertPricesToString(List<Price> prices) {
         // 리스트의 각 Price 객체의 itemCode에서 itemName 필드를 추출하고 이를 콤마로 구분된 문자열로 결합
