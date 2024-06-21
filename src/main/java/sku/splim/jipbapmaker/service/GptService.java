@@ -157,6 +157,14 @@ public class GptService {
         );
         return translation.getTranslatedText();
     }
+    public String translateToKorean(String text) {
+        Translation translation = translate.translate(
+                text,
+                Translate.TranslateOption.sourceLanguage("en"),
+                Translate.TranslateOption.targetLanguage("ko")
+        );
+        return translation.getTranslatedText();
+    }
 
     public GptResponse generateRecipeWithImage(String foodList) {
         String gptAnswer = getGptAnswer(foodList);

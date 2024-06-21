@@ -79,7 +79,7 @@ public class CameraService {
                 }
                 String responseBody = responseBuilder.toString();
                 String detectedClasses = processResponse(responseBody);
-                return gptService.translateToEnglish(detectedClasses);
+                return gptService.translateToKorean(detectedClasses);
             }
 
         } catch (MalformedURLException e) {
