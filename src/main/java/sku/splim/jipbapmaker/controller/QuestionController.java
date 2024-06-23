@@ -39,6 +39,7 @@ public class QuestionController {
             dto.setStatus(question.isStatus());
             dto.setModifyDate(question.getModifyDate());
             dto.setCreateDate(question.getCreateDate());
+            dto.setDeletedAt(question.getDeletedAt());
             UserDTO userDTO = new UserDTO();
             dto.setUserDTO(userDTO.convertToDTO(question.getUser()));
             dtos.add(dto);
@@ -59,6 +60,7 @@ public class QuestionController {
             dto.setContent(question.getContent());
             dto.setStatus(question.isStatus());
             dto.setModifyDate(question.getModifyDate());
+            dto.setDeletedAt(question.getDeletedAt());
             UserDTO userDTO = new UserDTO();
             dto.setUserDTO(userDTO.convertToDTO(question.getUser()));
             dtos.add(dto);
@@ -90,9 +92,9 @@ public class QuestionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteQuestion(@PathVariable("id") long id) {
         try {
-            // id에 해당하는 질문을 삭제하고 삭제된 항목의 수를 반환
-            long deletedCount = questionService.deleteQuestionById(id);
-            if (deletedCount == 0) {
+            // id에 해당하는 질문을 soft delete 하고 업데이트된 항목의 수를 반환
+            boolean isDeleted = questionService.softDeleteQuestionById(id);
+            if (!isDeleted) {
                 return ResponseEntity.notFound().build();
             }
             // 삭제 성공 시 200 OK 응답 반환

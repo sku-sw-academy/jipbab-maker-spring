@@ -19,6 +19,7 @@ public class QuestionDTO {
     private boolean status;
     private Timestamp createDate = new Timestamp(System.currentTimeMillis());
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
+    private Timestamp deletedAt;
 
     public QuestionDTO(){}
 
@@ -38,6 +39,7 @@ public class QuestionDTO {
         questionDTO.setModifyDate(question.getModifyDate());
         questionDTO.setStatus(question.isStatus());
         questionDTO.setCreateDate(question.getCreateDate());
+        questionDTO.setDeletedAt(question.getDeletedAt());
         UserDTO userDTO1 = new UserDTO();
         questionDTO.setUserDTO(userDTO1.convertToDTO(question.getUser()));
         return questionDTO;

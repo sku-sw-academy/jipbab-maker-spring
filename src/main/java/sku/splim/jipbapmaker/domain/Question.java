@@ -36,6 +36,9 @@ public class Question {
     @Column(name = "updated_at", updatable = true)
     private Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
 
+    @Column(name = "deleted_at")
+    private Timestamp deletedAt;
+
     @PrePersist
     protected void onCreate() {
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -63,6 +66,7 @@ public class Question {
         question.setModifyDate(questionDTO.getModifyDate());
         question.setCreateDate(questionDTO.getCreateDate());
         question.setStatus(questionDTO.isStatus());
+        question.setDeletedAt(questionDTO.getDeletedAt());
         User user = new User();
         question.setUser(user.convertToEntity(questionDTO.getUserDTO()));
 
